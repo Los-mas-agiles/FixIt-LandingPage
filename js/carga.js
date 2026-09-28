@@ -1,5 +1,5 @@
 // Pantalla de carga: la grúa arma la marca con 3 bloques mientras carga
-// la página; luego se elige entrar con o sin sonido y se abren las puertas.
+// la página; cuando todo está listo, las puertas se abren solas.
 import * as S from './sonido.js'
 
 const gsap = window.gsap
@@ -24,7 +24,6 @@ export function cargar() {
     const texto = carga.querySelector('.carga-texto')
     const barra = carga.querySelector('.carga-barra span')
     const titulo = carga.querySelector('.carga-titulo')
-    const botones = carga.querySelector('.carga-botones')
 
     gsap.set(carro, { x: 380 })
     gsap.set(gancho, { y: REPOSO })
@@ -68,24 +67,15 @@ export function cargar() {
       gsap.to(progreso, { v: 100, duration: 0.3, onUpdate: pintar })
       texto.textContent = 'Edificio listo'
       gsap.to(titulo, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(2)', startAt: { y: 20 } })
-      botones.hidden = false
-      gsap.from(botones.children, { y: 16, opacity: 0, duration: 0.4, stagger: 0.08, ease: 'power3.out' })
-      const preferido = botones.querySelector(`[data-sonido="${S.sonidoGuardado() ? 'si' : 'no'}"]`)
-      preferido.focus({ preventScroll: true })
-    })
-
-    botones.addEventListener('click', (e) => {
-      const b = e.target.closest('.entrar')
-      if (!b) return
-      S.activarSonido(b.dataset.sonido === 'si')
-      botones.querySelectorAll('button').forEach((x) => { x.disabled = true })
-      S.ding()
-      // La azotea empieza a animarse mientras las puertas se abren
-      gsap.delayedCall(0.3, resolver)
-      gsap.timeline({ onComplete: () => carga.remove() })
-        .to('.carga-centro', { opacity: 0, scale: 0.96, duration: 0.3 })
-        .to('.puerta.izq', { xPercent: -101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
-        .to('.puerta.der', { xPercent: 101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
+      // Se abren las puertas y la azotea empieza a animarse mientras tanto
+      gsap.delayedCall(0.9, () => {
+        S.ding()
+        gsap.delayedCall(0.3, resolver)
+        gsap.timeline({ onComplete: () => carga.remove() })
+          .to('.carga-centro', { opacity: 0, scale: 0.96, duration: 0.3 })
+          .to('.puerta.izq', { xPercent: -101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
+          .to('.puerta.der', { xPercent: 101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
+      })
     })
   })
 }

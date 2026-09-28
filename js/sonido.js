@@ -1,8 +1,9 @@
 // Efectos de sonido sintetizados con Web Audio: no hay archivos de audio.
-// El navegador solo deja sonar audio después de un clic, por eso se
-// activa con "Entrar con sonido" en la pantalla de carga.
+// El sonido viene activado, pero el navegador no deja que suene hasta el primer
+// gesto de la persona (clic, toque o tecla; la rueda del mouse no cuenta).
+// `esperarGesto()` lo desbloquea en ese momento.
 
-const CLAVE = 'fixit-sonido'
+const CLAVE = 'fixit-sonido-v2'
 let ctx = null
 let salida = null
 let ruido = null
@@ -16,13 +17,33 @@ export function activarSonido(si) {
   activo = si
   try { localStorage.setItem(CLAVE, si ? 'si' : 'no') } catch { /* sin almacenamiento */ }
   if (si && !ctx) iniciar()
-  if (ctx && ctx.state === 'suspended') ctx.resume()
+  if (ctx && ctx.state === 'suspended') ctx.resume().then(avisar, () => {})
+  avisar()
 }
 
 export const sonidoActivo = () => activo
+// true si está activado pero el navegador todavía no lo deja sonar
+export const sonidoBloqueado = () => activo && (!ctx || ctx.state !== 'running')
+
+const avisos = new Set()
+export const alCambiarSonido = (fn) => avisos.add(fn)
+const avisar = () => avisos.forEach((fn) => fn())
+
+let desbloqueadoEn = -1e9
+// El gesto que desbloquea el audio no debe contar además como "apagar el sonido"
+export const recienDesbloqueado = () => performance.now() - desbloqueadoEn < 800
+
+export function esperarGesto() {
+  const desbloquear = () => {
+    if (activo && !ctx) iniciar()
+    if (ctx && ctx.state !== 'running') { desbloqueadoEn = performance.now(); ctx.resume().then(avisar) }
+  }
+  ;['pointerdown', 'keydown', 'touchend'].forEach((ev) => window.addEventListener(ev, desbloquear, { capture: true, passive: true }))
+}
 
 function iniciar() {
   ctx = new AudioContext()
+  ctx.onstatechange = avisar
   salida = ctx.createGain()
   salida.gain.value = 0.42
   const comp = ctx.createDynamicsCompressor()

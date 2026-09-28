@@ -5,6 +5,7 @@ import { iniciarAzotea, entradaAzotea } from './azotea.js'
 import { iniciarContacto } from './contacto.js'
 import { cargar } from './carga.js'
 import { dibujarCiudad } from './ciudad.js'
+import { prepararEscenas } from './escenas.js'
 
 const gsap = window.gsap
 gsap.registerPlugin(window.Observer, window.CustomEase, window.SplitText)
@@ -17,12 +18,26 @@ document.querySelectorAll('svg:not([viewBox]) > use:only-child, svg.rol-figura >
   if (simbolo) svg.setAttribute('viewBox', simbolo.getAttribute('viewBox'))
 })
 
-// Botón de sonido del techo
+// Sonido: activado por defecto (salvo que la persona lo haya apagado antes);
+// suena desde el primer clic, toque o tecla.
 const btnSonido = document.querySelector('.btn-sonido')
-const pintarSonido = () => btnSonido.setAttribute('aria-pressed', String(S.sonidoActivo()))
-btnSonido.addEventListener('click', () => { S.activarSonido(!S.sonidoActivo()); pintarSonido(); S.clic() })
+const pintarSonido = () => {
+  btnSonido.setAttribute('aria-pressed', String(S.sonidoActivo()))
+  btnSonido.classList.toggle('pendiente', S.sonidoBloqueado())
+  btnSonido.title = S.sonidoBloqueado() ? 'Haz clic en la página para activar el sonido' : ''
+}
+btnSonido.addEventListener('click', () => {
+  if (!S.recienDesbloqueado()) S.activarSonido(!S.sonidoActivo())
+  pintarSonido()
+  S.clic()
+})
+S.alCambiarSonido(pintarSonido)
+S.activarSonido(S.sonidoGuardado())
+S.esperarGesto()
+pintarSonido()
 
 dibujarCiudad()
+prepararEscenas()
 iniciarContacto()
 
 if (document.documentElement.classList.contains('sin-movimiento')) {
@@ -32,7 +47,6 @@ if (document.documentElement.classList.contains('sin-movimiento')) {
   iniciarAzotea()
   const destino = destinoInicial()
   await cargar()
-  pintarSonido()
   const intro = entradaAzotea()
   if (destino > 0) intro.eventCallback('onComplete', () => ir(destino))
 }

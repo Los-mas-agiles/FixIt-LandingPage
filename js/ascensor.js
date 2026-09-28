@@ -2,7 +2,7 @@
 // actualiza el display y la botonera, y construye cada piso al llegar.
 import * as S from './sonido.js'
 import { construir } from './obra.js'
-import { alConstruir } from './escenas.js'
+import { alConstruir, activarBucles } from './escenas.js'
 
 const gsap = window.gsap
 const raiz = document.documentElement
@@ -154,6 +154,7 @@ function llegar(i, pararMotor) {
   marcar(i)
   S.ding()
   const p = pisos[i]
+  activarBucles(p)
   history.replaceState(null, '', i === 0 ? location.pathname : `#${p.id}`)
   if (!p.classList.contains('construido')) {
     obra = construir(p, (piso) => { obra = null; alConstruir(piso) })

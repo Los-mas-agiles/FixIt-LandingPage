@@ -24,6 +24,3 @@
   background:repeating-linear-gradient(135deg, var(--mbc-acc-fg) 0 10px, #DCD3AE 10px 20px);
 }
 .carga-titulo{ font:800 clamp(48px, 7vw, 80px)/1 var(--mbc-f-display); opacity:0; }
-.carga-botones{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; }
-.carga-botones[hidden]{ display:none; }
-.carga-botones .btn:not(.ghost-oscuro){ background:var(--mbc-acc-fg); color:var(--mbc-ink); --bs:rgba(0,0,0,.55); }

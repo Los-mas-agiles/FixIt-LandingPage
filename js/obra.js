@@ -44,7 +44,7 @@ function piezasContenido(contenido) {
   return contenido.querySelectorAll(
     '.tag.dark, .t-piso, .lede, .dolores > li, .herramientas > li, .pasos > li, .metas-titulo, .meta, ' +
     '.roles-lista .block, .rol-figura, .plan, .planes-incluye, .miembro, .faq > details, ' +
-    '.contacto-cta, .pie, .formulario, .reloj, .telefono'
+    '.contacto-cta, .pie, .formulario, .reloj, .telefono, .pizarra'
   )
 }
 

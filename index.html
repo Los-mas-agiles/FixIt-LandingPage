@@ -463,11 +463,12 @@
       <div class="pintura" aria-hidden="true"></div>
       <div class="acabados" aria-hidden="true">
         <svg class="ac lampara" style="left:28%; top:0; width:5%"><use href="#k-lampara"/></svg>
-        <svg class="ac" style="right:0; top:0; width:22%"><use href="#k-tuberias"/></svg>
+        <svg class="ac lampara" style="left:74%; top:0; width:5%"><use href="#k-lampara"/></svg>
         <svg class="ac" style="left:1%; bottom:0; width:6%"><use href="#k-planta"/></svg>
       </div>
       <div class="luz" aria-hidden="true"></div>
       <div class="contenido funciona">
+        <div class="funciona-texto">
         <p class="tag dark">Piso 05 · Cómo funciona</p>
         <h2 id="t-5" class="t-piso">De la falla a la solución, en cuatro pasos.</h2>
         <ol class="pasos">
@@ -481,6 +482,96 @@
           <div class="meta block on-dark"><b><span data-contar="48" data-prefijo="&lt; ">48</span> h</b><span>para resolver lo de prioridad alta</span></div>
           <div class="meta block on-dark"><b><span data-contar="100">100</span> %</b><span>de incidencias clasificadas por IA</span></div>
         </div>
+        </div>
+
+        <!-- Pizarra: el proceso completo animado en bucle (escenas.js → funciona) -->
+        <svg class="pizarra" viewBox="0 0 600 370" aria-hidden="true">
+          <defs>
+            <pattern id="pz-cuadricula" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#2C2C2C" stroke-opacity=".06"/></pattern>
+            <clipPath id="pz-pantalla"><rect x="42" y="192" width="56" height="92" rx="8"/></clipPath>
+            <clipPath id="pz-chip"><rect x="184" y="184" width="56" height="56" rx="10"/></clipPath>
+          </defs>
+          <rect x="6" y="6" width="588" height="344" rx="20" fill="#FFFFFF" stroke="#2C2C2C" stroke-width="5"/>
+          <rect x="10" y="10" width="580" height="336" rx="17" fill="url(#pz-cuadricula)"/>
+          <rect x="70" y="348" width="460" height="14" rx="6" fill="#F5E6A3" stroke="#2C2C2C" stroke-width="3"/>
+          <rect x="110" y="340" width="34" height="10" rx="4" fill="#F2C4A8" stroke="#2C2C2C" stroke-width="2"/>
+          <rect x="152" y="340" width="34" height="10" rx="4" fill="#BFE0F0" stroke="#2C2C2C" stroke-width="2"/>
+          <text x="28" y="40" class="pz-txt">EN VIVO · UNA INCIDENCIA</text>
+
+          <!-- Tablero Kanban -->
+          <g class="pz-kanban">
+            <rect x="290" y="30" width="94" height="300" rx="12" fill="#F6F6F6" stroke="#2C2C2C" stroke-opacity=".18" stroke-width="2"/>
+            <rect x="392" y="30" width="94" height="300" rx="12" fill="#F6F6F6" stroke="#2C2C2C" stroke-opacity=".18" stroke-width="2"/>
+            <rect x="494" y="30" width="94" height="300" rx="12" fill="#F6F6F6" stroke="#2C2C2C" stroke-opacity=".18" stroke-width="2"/>
+            <rect x="290" y="30" width="94" height="28" rx="12" fill="#F2C4A8" stroke="#2C2C2C" stroke-width="2.5"/>
+            <rect x="392" y="30" width="94" height="28" rx="12" fill="#BFE0F0" stroke="#2C2C2C" stroke-width="2.5"/>
+            <rect x="494" y="30" width="94" height="28" rx="12" fill="#B8E8D0" stroke="#2C2C2C" stroke-width="2.5"/>
+            <text x="337" y="48" text-anchor="middle" class="pz-col">PENDIENTE</text>
+            <text x="439" y="48" text-anchor="middle" class="pz-col">EN PROCESO</text>
+            <text x="541" y="48" text-anchor="middle" class="pz-col">RESUELTA</text>
+            <g fill="#FFFFFF" stroke="#2C2C2C" stroke-opacity=".25" stroke-width="2">
+              <rect x="302" y="176" width="70" height="30" rx="7"/>
+              <rect x="404" y="176" width="70" height="30" rx="7"/><rect x="404" y="214" width="70" height="30" rx="7"/>
+              <rect x="506" y="176" width="70" height="30" rx="7"/><rect x="506" y="214" width="70" height="30" rx="7"/><rect x="506" y="252" width="70" height="30" rx="7"/>
+            </g>
+            <g id="pz-llave" opacity="0">
+              <path d="M466 128 484 110" stroke="#2C2C2C" stroke-width="10" stroke-linecap="round"/>
+              <path d="M466 128 484 110" stroke="#C9B8E8" stroke-width="5" stroke-linecap="round"/>
+              <path d="M480 100a10 10 0 1 0 14 14l-5-1-2-6-6-2z" fill="#C9B8E8" stroke="#2C2C2C" stroke-width="2.5" stroke-linejoin="round"/>
+            </g>
+          </g>
+
+          <!-- Tubería con fuga -->
+          <path d="M16 84H132" stroke="#2C2C2C" stroke-width="20" stroke-linecap="round"/>
+          <path d="M16 84H132" stroke="#BFE0F0" stroke-width="13" stroke-linecap="round"/>
+          <rect x="70" y="72" width="18" height="24" rx="4" fill="#F5E6A3" stroke="#2C2C2C" stroke-width="3"/>
+          <path id="pz-gota" d="M79 100q7 11 0 16-7-5 0-16Z" fill="#BFE0F0" stroke="#2C2C2C" stroke-width="2"/>
+
+          <!-- La tarjeta de la incidencia (viaja por todo el proceso) -->
+          <g id="pz-tarjeta" transform="translate(40 222) scale(.3)" opacity="0">
+            <rect x="0" y="0" width="70" height="44" rx="8" fill="#FFFFFF" stroke="#2C2C2C" stroke-width="3"/>
+            <rect x="6" y="6" width="22" height="18" rx="3" fill="#BFE0F0" stroke="#2C2C2C" stroke-width="1.5"/>
+            <path d="M7 23 14 15 19 20 22 17 27 23Z" fill="#6AAAD0"/>
+            <rect x="32" y="8" width="30" height="4" rx="2" fill="#2C2C2C" opacity=".55"/>
+            <rect x="32" y="16" width="22" height="4" rx="2" fill="#2C2C2C" opacity=".3"/>
+            <g id="pz-tag1"><rect x="6" y="29" width="36" height="10" rx="3" fill="#C9B8E8" stroke="#2C2C2C" stroke-width="1.2"/><text x="24" y="36.6" text-anchor="middle" class="pz-mini">PLOMERÍA</text></g>
+            <g id="pz-tag2"><rect x="45" y="29" width="20" height="10" rx="3" fill="#2C2C2C"/><text x="55" y="36.6" text-anchor="middle" class="pz-mini claro">ALTA</text></g>
+            <g id="pz-ok"><circle cx="68" cy="2" r="10" fill="#B8E8D0" stroke="#2C2C2C" stroke-width="2.5"/><path d="M63 2l3.5 3.5L73-1" fill="none" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+          </g>
+
+          <!-- Celular del residente -->
+          <g id="pz-tel">
+            <rect x="36" y="180" width="68" height="118" rx="14" fill="#2C2C2C"/>
+            <rect x="42" y="192" width="56" height="92" rx="8" fill="#BFE0F0"/>
+            <circle cx="70" cy="186" r="2.5" fill="#F5E6A3"/>
+            <path d="M50 206v-6h6M90 206v-6h-6M50 270v6h6M90 270v6h-6" fill="none" stroke="#2C2C2C" stroke-width="2" opacity=".5"/>
+            <g clip-path="url(#pz-pantalla)">
+              <g id="pz-aviso" transform="translate(0 -36)">
+                <rect x="45" y="198" width="50" height="28" rx="6" fill="#B8E8D0" stroke="#2C2C2C" stroke-width="2"/>
+                <path d="M51 212l3.5 3.5 7-7" fill="none" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="66" y="206" width="24" height="4" rx="2" fill="#2C2C2C" opacity=".55"/>
+                <rect x="66" y="214" width="16" height="4" rx="2" fill="#2C2C2C" opacity=".3"/>
+              </g>
+            </g>
+            <circle id="pz-flash" cx="70" cy="238" r="34" fill="#FFFFFF" opacity="0"/>
+          </g>
+          <text x="70" y="322" text-anchor="middle" class="pz-txt">RESIDENTE</text>
+
+          <!-- Chip de IA -->
+          <g id="pz-ia">
+            <path d="M190 162v8M212 162v8M234 162v8M190 254v8M212 254v8M234 254v8M162 190h8M162 212h8M162 234h8M254 190h8M254 212h8M254 234h8" stroke="#2C2C2C" stroke-width="4" stroke-linecap="round"/>
+            <rect x="170" y="170" width="84" height="84" rx="16" fill="#F5E6A3" stroke="#2C2C2C" stroke-width="4"/>
+            <rect x="184" y="184" width="56" height="56" rx="10" fill="#FFFFFF" stroke="#2C2C2C" stroke-width="2.5"/>
+            <text x="212" y="222" text-anchor="middle" class="pz-ia">IA</text>
+            <g clip-path="url(#pz-chip)"><rect id="pz-scan" x="184" y="184" width="56" height="5" fill="#C98763" opacity=".75"/></g>
+          </g>
+          <g id="pz-chispas" fill="#F5E6A3" stroke="#2C2C2C" stroke-width="2" stroke-linejoin="round">
+            <path d="M160 156l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+            <path d="M266 170l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+            <path d="M262 250l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+          </g>
+          <text x="212" y="286" text-anchor="middle" class="pz-txt">CLASIFICA</text>
+        </svg>
       </div>
     </div>
   </section>
@@ -509,15 +600,26 @@
         </div>
         <ul class="roles-lista">
           <li class="rol">
-            <svg class="rol-figura" viewBox="0 0 100 190" style="--ropa:#BFE0F0" aria-hidden="true"><use href="#k-persona"/><use href="#k-celular"/></svg>
+            <svg class="rol-figura residente" viewBox="0 0 100 190" style="--ropa:#BFE0F0" aria-hidden="true"><use href="#k-persona"/>
+              <g class="rf-tel"><rect x="4" y="84" width="22" height="36" rx="5" fill="#2C2C2C"/><rect class="rf-pantalla" x="8" y="89" width="14" height="24" rx="2" fill="#BFE0F0"/></g>
+              <g class="rf-globo"><rect x="-34" y="52" width="40" height="24" rx="8" fill="#FFFFFF" stroke="#2C2C2C" stroke-width="2.5"/><rect x="-28" y="58" width="12" height="12" rx="2" fill="#BFE0F0" stroke="#2C2C2C" stroke-width="1.5"/><path d="M-12 62h12M-12 68h8" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round"/></g>
+              <g class="rf-check"><circle cx="-8" cy="62" r="11" fill="#B8E8D0" stroke="#2C2C2C" stroke-width="2.5"/><path d="M-13 62l3.5 3.5 7-7" fill="none" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+            </svg>
             <div class="block" style="--c:#FFFFFF"><b>Residente</b><span>Reporta desde el celular y sigue el estado sin tener que preguntar.</span></div>
           </li>
           <li class="rol">
-            <svg class="rol-figura" viewBox="0 0 100 190" style="--ropa:#F2C4A8" aria-hidden="true"><use href="#k-persona"/><use href="#k-casco"/></svg>
+            <svg class="rol-figura tecnico" viewBox="0 0 100 190" style="--ropa:#F2C4A8" aria-hidden="true"><use href="#k-persona"/><use href="#k-casco"/>
+              <g class="rf-llave"><path d="M82 118 104 96" stroke="#2C2C2C" stroke-width="11" stroke-linecap="round"/><path d="M82 118 104 96" stroke="#C9B8E8" stroke-width="6" stroke-linecap="round"/><path d="M100 86a11 11 0 1 0 15 15l-6-1-2-7-7-2z" fill="#C9B8E8" stroke="#2C2C2C" stroke-width="2.5" stroke-linejoin="round"/></g>
+              <g class="rf-chispas" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round"><path d="M120 84l8-6M124 96h10M118 74l2-9"/></g>
+            </svg>
             <div class="block" style="--c:#FFFFFF"><b>Mantenimiento</b><span>Ve sus incidencias ordenadas por prioridad y actualiza el estado.</span></div>
           </li>
           <li class="rol">
-            <svg class="rol-figura" viewBox="0 0 100 190" style="--ropa:#C9B8E8" aria-hidden="true"><use href="#k-persona"/><use href="#k-corbata"/></svg>
+            <svg class="rol-figura admin" viewBox="0 0 100 190" style="--ropa:#C9B8E8" aria-hidden="true"><use href="#k-persona"/>
+              <path d="M50 58 44 66 50 100 56 66Z" fill="#2C2C2C"/>
+              <g class="rf-carpeta"><rect x="58" y="88" width="40" height="48" rx="5" fill="#F5E6A3" stroke="#2C2C2C" stroke-width="3"/><rect x="70" y="84" width="16" height="8" rx="3" fill="#2C2C2C"/>
+                <rect class="rf-barra" x="65" y="112" width="7" height="18" rx="2" fill="#2C2C2C"/><rect class="rf-barra" x="75" y="112" width="7" height="18" rx="2" fill="#5FAE88"/><rect class="rf-barra" x="85" y="112" width="7" height="18" rx="2" fill="#C98763"/></g>
+            </svg>
             <div class="block" style="--c:#FFFFFF"><b>Administración</b><span>Supervisa el tablero completo y mide los tiempos de atención.</span></div>
           </li>
         </ul>
@@ -585,6 +687,18 @@
         <svg class="ac" style="right:3%; top:12%; width:8%"><use href="#k-ventana"/></svg>
         <svg class="ac lampara" style="left:46%; top:0; width:4.5%"><use href="#k-lampara"/></svg>
         <svg class="ac" style="left:19%; bottom:0; width:5%"><use href="#k-planta"/></svg>
+        <svg class="ac tablero-agil" style="left:3%; top:46%; width:26%" viewBox="0 0 300 170">
+          <rect x="3" y="3" width="294" height="164" rx="14" fill="#E9C9A2" stroke="#2C2C2C" stroke-width="4"/>
+          <path d="M100 14V156M200 14V156" stroke="#2C2C2C" stroke-width="2.5" stroke-dasharray="6 6" opacity=".45"/>
+          <text x="50" y="28" text-anchor="middle" class="ta-col">POR HACER</text>
+          <text x="150" y="28" text-anchor="middle" class="ta-col">HACIENDO</text>
+          <text x="250" y="28" text-anchor="middle" class="ta-col">HECHO</text>
+          <g class="ta-nota" data-col="0" data-fila="0"><rect width="40" height="34" rx="4" fill="#F5E6A3" stroke="#2C2C2C" stroke-width="2.5"/><path d="M8 12h24M8 20h16" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" opacity=".6"/></g>
+          <g class="ta-nota" data-col="0" data-fila="1"><rect width="40" height="34" rx="4" fill="#BFE0F0" stroke="#2C2C2C" stroke-width="2.5"/><path d="M8 12h24M8 20h16" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" opacity=".6"/></g>
+          <g class="ta-nota" data-col="1" data-fila="0"><rect width="40" height="34" rx="4" fill="#F2C4A8" stroke="#2C2C2C" stroke-width="2.5"/><path d="M8 12h24M8 20h16" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" opacity=".6"/></g>
+          <g class="ta-nota" data-col="2" data-fila="0"><rect width="40" height="34" rx="4" fill="#B8E8D0" stroke="#2C2C2C" stroke-width="2.5"/><path d="M8 12h24M8 20h16" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" opacity=".6"/></g>
+          <g class="ta-nota" data-col="2" data-fila="1"><rect width="40" height="34" rx="4" fill="#C9B8E8" stroke="#2C2C2C" stroke-width="2.5"/><path d="M8 12h24M8 20h16" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" opacity=".6"/></g>
+        </svg>
         <svg class="ac" style="left:1%; bottom:0; width:17%"><use href="#k-escritorio"/></svg>
         <svg class="ac" style="right:1%; bottom:0; width:8%"><use href="#k-estante"/></svg>
       </div>
@@ -625,6 +739,8 @@
       <div class="pintura" aria-hidden="true"></div>
       <div class="acabados" aria-hidden="true">
         <svg class="ac" style="right:2%; top:12%; width:17%"><use href="#k-casilleros"/></svg>
+        <svg class="ac sobre" style="right:9%; top:44%; width:4.5%" viewBox="0 0 50 34"><rect x="2" y="2" width="46" height="30" rx="5" fill="#FFFFFF" stroke="#2C2C2C" stroke-width="3"/><path d="M4 5 25 20 46 5" fill="none" stroke="#2C2C2C" stroke-width="3" stroke-linejoin="round"/><circle cx="40" cy="25" r="4" fill="#F2C4A8"/></svg>
+        <svg class="ac aviso-buzon" style="right:3%; top:9%; width:3%" viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="#F2C4A8" stroke="#2C2C2C" stroke-width="3"/><path d="M15 8v8" stroke="#2C2C2C" stroke-width="3.5" stroke-linecap="round"/><circle cx="15" cy="21.5" r="2" fill="#2C2C2C"/></svg>
         <svg class="ac" style="right:2%; bottom:0; width:4.5%"><use href="#k-paraguero"/></svg>
         <svg class="ac" style="left:1%; bottom:0; width:6%"><use href="#k-planta"/></svg>
       </div>
@@ -654,6 +770,14 @@
       <div class="pintura" aria-hidden="true"></div>
       <div class="acabados" aria-hidden="true">
         <div class="ac letrero" style="left:50%; top:7%">RECEPCIÓN</div>
+        <svg class="ac reloj-pared" style="left:6%; top:13%; width:6%" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="36" fill="#FFFFFF" stroke="#2C2C2C" stroke-width="5"/>
+          <g stroke="#2C2C2C" stroke-width="3" stroke-linecap="round"><path d="M40 10v6M40 64v6M10 40h6M64 40h6"/></g>
+          <path class="rp-h" d="M40 40V24" stroke="#2C2C2C" stroke-width="5" stroke-linecap="round"/>
+          <path class="rp-m" d="M40 40V15" stroke="#2C2C2C" stroke-width="3.5" stroke-linecap="round"/>
+          <path class="rp-s" d="M40 46V13" stroke="#C98763" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="40" cy="40" r="4" fill="#2C2C2C"/>
+        </svg>
         <svg class="ac lampara" style="left:16%; top:0; width:4.5%"><use href="#k-lampara"/></svg>
         <svg class="ac lampara" style="left:80%; top:0; width:4.5%"><use href="#k-lampara"/></svg>
         <svg class="ac" style="left:1%; bottom:0; width:21%"><use href="#k-mostrador"/></svg>
@@ -733,7 +857,7 @@
 <button class="bt-movil" type="button" aria-controls="botonera" aria-expanded="false"><span class="bt-movil-piso">AZ</span><span class="sr">Abrir la botonera</span></button>
 
 <!-- ═════════ PANTALLA DE CARGA: puertas del ascensor ═════════ -->
-<div id="carga" role="dialog" aria-modal="true" aria-labelledby="carga-titulo">
+<div id="carga" aria-hidden="true">
   <div class="puerta izq"></div><div class="puerta der"></div>
   <div class="carga-centro">
     <svg class="grua" viewBox="0 0 420 300" aria-hidden="true">
@@ -753,10 +877,6 @@
     <p class="carga-estado mono"><span class="carga-texto">Construyendo el edificio</span> <span class="carga-pct">0 %</span></p>
     <div class="carga-barra"><span></span></div>
     <h2 id="carga-titulo" class="carga-titulo">FixIt</h2>
-    <div class="carga-botones" hidden>
-      <button class="btn grande entrar" type="button" data-sonido="si">Entrar con sonido</button>
-      <button class="btn ghost-oscuro grande entrar" type="button" data-sonido="no">Entrar sin sonido</button>
-    </div>
   </div>
 </div>
 
