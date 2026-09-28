@@ -1,0 +1,290 @@
+/* ═══════════════════════════════════════════════════════════════
+   Pisos: estructura (techo, pilares, losa), capas de obra
+   (ladrillo → tarrajeo → pintura → acabados → luz) y contenido.
+   ═══════════════════════════════════════════════════════════════ */
+
+#edificio{ position:relative; z-index:10; }
+html.js:not(.sin-movimiento) #edificio{ position:absolute; top:0; left:0; width:100%; will-change:transform; }
+
+.piso{ position:relative; height:var(--h); }
+html.js:not(.sin-movimiento) .piso{ overflow:hidden; }
+
+/* ── Estructura de concreto (se ve al viajar entre pisos) ──── */
+.estructura{ position:absolute; inset:0; pointer-events:none; }
+.estructura > *{ position:absolute; background:var(--concreto); }
+.techo{
+  top:0; height:var(--techo); left:calc(var(--ed-l) - 26px); width:calc(var(--ed-w) + 52px);
+  background:
+    radial-gradient(circle at 20% 40%, rgba(0,0,0,.06) 0 2px, transparent 3px) 0 0/34px 22px,
+    var(--concreto);
+  box-shadow:inset 0 -4px 0 var(--concreto-d);
+}
+.pilar{ top:0; bottom:0; width:26px; box-shadow:inset 0 0 0 3px var(--mbc-ink); }
+.pilar.izq{ left:calc(var(--ed-l) - 26px); }
+.pilar.der{ left:calc(var(--ed-l) + var(--ed-w)); }
+.suelo{
+  bottom:0; height:calc(var(--umbral) + 16px); left:calc(var(--ed-l) - 26px); width:calc(var(--ed-w) + 52px);
+  background:linear-gradient(to bottom, var(--acabado, #E9DCC6) 0 16px, var(--mbc-ink) 16px 19px, var(--concreto) 19px);
+  box-shadow:0 -3px 0 var(--mbc-ink);
+}
+.suelo.tierra{ left:0; width:100%; background:linear-gradient(to bottom, #E9E4DA 0 16px, var(--mbc-ink) 16px 19px, #B9B1A0 19px); }
+.rotulo{
+  position:absolute; right:60px; bottom:6px; font:800 30px/1 var(--mbc-f-display); letter-spacing:.04em;
+  color:rgba(44,44,44,.4);
+}
+.piso:not(.construido) .suelo{ --acabado:var(--concreto); }
+
+/* ── Sala: el interior del piso ────────────────────────────── */
+.sala{
+  position:absolute; top:var(--techo); bottom:calc(var(--umbral) + 16px);
+  left:var(--ed-l); width:var(--ed-w);
+}
+.piso:not(.azotea) .sala{ overflow:hidden; }
+.sala > .plano, .sala > .muro, .sala > .tarrajeo, .sala > .pintura, .sala > .acabados, .sala > .luz{ position:absolute; inset:0; pointer-events:none; }
+
+/* Obra gris: plano + cinta mientras no se construye */
+.plano{
+  border:2px dashed rgba(255,255,255,.4); border-top:0; border-bottom:0;
+  background:
+    linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px) 0 0/40px 40px,
+    linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px) 0 0/40px 40px;
+  display:grid; place-items:center;
+}
+.cinta{
+  position:relative; padding:14px 48px; transform:rotate(-4deg); background:var(--mbc-acc-fg);
+  font:700 13px/1 var(--mbc-f-mono); letter-spacing:.14em; color:var(--mbc-ink);
+  box-shadow:0 4px 0 rgba(0,0,0,.25);
+}
+.cinta::before,.cinta::after{
+  content:''; position:absolute; left:0; right:0; height:6px;
+  background:repeating-linear-gradient(135deg, var(--mbc-ink) 0 8px, transparent 8px 16px);
+}
+.cinta::before{ top:2px; } .cinta::after{ bottom:2px; }
+.construido .plano{ display:none; }
+
+/* Ladrillos (los crea obra.js) */
+.ladrillo{
+  position:absolute; height:26px; border-radius:5px; background:var(--lc, #E7A987);
+  box-shadow:inset 0 0 0 2px rgba(44,44,44,.55), inset 0 3px 0 rgba(255,255,255,.3);
+}
+.tarrajeo{
+  background:
+    radial-gradient(circle, rgba(0,0,0,.07) 0 1.5px, transparent 2px) 0 0/14px 14px,
+    radial-gradient(circle, rgba(255,255,255,.18) 0 1.5px, transparent 2px) 7px 7px/14px 14px,
+    #D3CDBF;
+  clip-path:inset(100% 0 0 0);
+}
+.pintura{
+  background:
+    linear-gradient(to top, var(--zocalo) 0 6%, var(--mbc-ink) 6% calc(6% + 3px), transparent calc(6% + 3px)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 2px, transparent 2px 64px),
+    var(--pared);
+  clip-path:inset(0 100% 0 0);
+}
+.construido .tarrajeo, .construido .pintura{ clip-path:inset(0 0 0 0); }
+.construido .muro{ display:none; }
+
+.acabados .ac{ position:absolute; height:auto; opacity:0; overflow:visible; }
+.acabados svg.ac{ display:block; }
+.construido .acabados .ac{ opacity:1; }
+.acabados .ventana{ --vidrio:var(--cielo-b); }
+.acabados .lampara{ transform-origin:50% 0; }
+.tabique{ top:0; bottom:0; width:14px; margin-left:-7px; background:rgba(44,44,44,.1); box-shadow:inset 3px 0 0 rgba(44,44,44,.14), inset -3px 0 0 rgba(44,44,44,.14); }
+
+/* Luz: de noche el piso está a oscuras hasta que se enciende la lámpara */
+.luz{
+  background:rgba(14,16,36, calc(var(--np, 0) * .75));
+  transition:background .25s var(--mbc-ease);
+}
+.luz::after{
+  content:''; position:absolute; inset:0; opacity:calc(var(--np, 0) * 1.3);
+  background:radial-gradient(ellipse 34% 58% at var(--lx, 50%) 14%, rgba(255,236,190,.34), rgba(255,236,190,0) 70%);
+  transition:opacity .25s var(--mbc-ease);
+}
+.piso.apagado .luz{ background:rgba(14,16,36, calc(var(--np, 0) * .92)); }
+.piso.apagado .luz::after{ opacity:0; }
+.foco{ transition:fill .2s; }
+.piso.apagado .foco{ fill:#6B6B6B; }
+
+/* Herramientas de obra (las anima obra.js) */
+.herramienta{ position:absolute; z-index:5; pointer-events:none; }
+
+/* ── Contenido ─────────────────────────────────────────────── */
+.contenido{ position:absolute; inset:0; z-index:6; padding:clamp(20px, 3vw, 44px) clamp(20px, 3.2vw, 48px); }
+.piso:not(.construido):not(.azotea) .contenido{ visibility:hidden; }
+.t-piso{ font:700 clamp(30px, 3.5vw, 54px)/1.02 var(--mbc-f-display); letter-spacing:-.012em; margin:14px 0 12px; text-wrap:balance; }
+.contenido .tag.dark{ filter:drop-shadow(0 3px 0 rgba(0,0,0,.2)); }
+[data-texto="claro"] .t-piso{ color:#FFF6D6; }
+[data-texto="claro"] .lede{ color:#EDE3C4; }
+.block b{ display:block; font:700 19px/1.15 var(--mbc-f-display); }
+.block span{ display:block; font-size:var(--mbc-t-small); color:var(--mbc-ink-2); margin-top:4px; line-height:1.45; }
+.block.on-dark span{ color:var(--mbc-acc-fg-2); }
+
+/* Piso 7 · El problema */
+.problema{ display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(0, .9fr); gap:clamp(20px, 4vw, 60px); align-items:center; }
+.dolores{ display:grid; gap:14px; margin-top:20px; max-width:520px; }
+.dolores .block{ padding:12px 18px; }
+.col-escena{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+.reloj{
+  display:flex; align-items:baseline; gap:10px; padding:8px 16px; border-radius:12px; background:#1B1B1B; color:#F2C4A8;
+  font:700 30px/1 var(--mbc-f-mono); box-shadow:inset 0 0 0 2px rgba(242,196,168,.3), 0 5px 0 rgba(0,0,0,.35);
+}
+.reloj-dia{ font-size:14px; letter-spacing:.1em; }
+.reloj-nota{ font-size:13px; color:#FFF6D6; opacity:0; }
+.telefono{
+  width:min(270px, 100%); height:min(380px, 48vh); padding:10px; border-radius:34px; background:var(--mbc-ink);
+  transform:rotate(3deg); filter:drop-shadow(0 10px 0 rgba(0,0,0,.3)); display:flex; flex-direction:column;
+}
+.tel-cabeza{
+  display:flex; align-items:center; gap:10px; padding:12px 12px 10px; border-radius:24px 24px 0 0; background:#F5E6A3;
+  font-size:13px; line-height:1.2;
+}
+.tel-cabeza small{ display:block; font-size:11px; color:var(--mbc-ink-2); }
+.tel-avatar{ width:30px; height:30px; border-radius:10px; background:#BFE0F0; box-shadow:inset 0 0 0 2px var(--mbc-ink); flex:none; }
+.tel-chat{
+  flex:1; overflow:hidden; border-radius:0 0 24px 24px; padding:10px; background:#EFE8DC;
+  display:flex; flex-direction:column; justify-content:flex-end; gap:6px;
+}
+.msj{
+  max-width:86%; padding:7px 10px; border-radius:12px; background:#FFFFFF; font-size:12.5px; line-height:1.3;
+  box-shadow:0 2px 0 rgba(0,0,0,.08); align-self:flex-start;
+}
+.msj small{ display:block; font:500 10px var(--mbc-f-mono); color:var(--mbc-ink-3); margin-bottom:2px; }
+.msj.mio{ align-self:flex-end; background:#D9F2E4; }
+.msj.clave{ background:#F2C4A8; box-shadow:inset 0 0 0 2px var(--mbc-ink); font-weight:600; }
+.msj.sticker{ background:none; box-shadow:none; font-size:34px; padding:0 4px; }
+.gotera{ top:0; bottom:0; width:12px; }
+.gotera i{
+  position:absolute; left:0; top:0; width:10px; height:14px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+  background:#BFE0F0; box-shadow:inset 0 0 0 2px var(--mbc-ink); opacity:0;
+}
+.construido .gotera i{ animation:gota 1.6s cubic-bezier(.55,0,1,.45) infinite; }
+.gotera i:nth-child(2){ animation-delay:.55s!important; } .gotera i:nth-child(3){ animation-delay:1.1s!important; }
+@keyframes gota{ 0%{ top:4%; opacity:1; } 88%{ top:calc(100% - 44px); opacity:1; } 100%{ top:calc(100% - 44px); opacity:0; } }
+.mancha{ width:90px; height:42px; border-radius:0 0 50% 50%; background:rgba(106,170,208,.45); }
+.lampara.parpadea .foco{ animation:parpadeo 5s steps(1) infinite; }
+@keyframes parpadeo{ 0%, 60%, 64%, 67%, 100%{ fill:#FFF6D6; } 61%, 65%{ fill:#6B6B6B; } }
+
+/* Piso 6 · La solución */
+.herramientas{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:22px 16px; max-width:min(74%, 900px); margin-top:22px; }
+.herramientas .block{ padding:14px 16px 16px; }
+.hu{ display:inline-block!important; font-size:10.5px!important; letter-spacing:.08em; padding:2px 7px; border-radius:6px; background:var(--mbc-ink); color:var(--mbc-acc-fg)!important; margin:0 0 8px!important; }
+
+/* Piso 5 · Cómo funciona */
+.pasos{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:30px; max-width:min(80%, 980px); margin-top:22px; counter-reset:paso; }
+.pasos .block{ padding:16px 16px 18px; }
+.pasos .block:not(:last-child)::after{
+  content:'→'; position:absolute; right:-25px; top:50%; transform:translateY(-50%); font:700 22px var(--mbc-f-mono); color:var(--mbc-ink);
+}
+.paso-n{ display:grid!important; place-items:center; width:34px; height:34px; border-radius:10px; background:var(--mbc-ink); color:var(--mbc-acc-fg)!important; font:700 18px/1 var(--mbc-f-display)!important; margin:0 0 10px!important; }
+.metas{ display:flex; flex-wrap:wrap; align-items:stretch; gap:18px; margin-top:34px; }
+.metas-titulo{ flex-basis:100%; font-size:12px; letter-spacing:.1em; text-transform:uppercase; }
+.meta{ min-width:220px; padding:16px 20px; }
+.meta b{ font:800 44px/1 var(--mbc-f-display); font-variant-numeric:tabular-nums; }
+
+/* Piso 4 · Roles */
+.roles{ display:flex; flex-direction:column; }
+.roles-cabeza{ text-align:center; }
+.roles-lista{ flex:1; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:clamp(18px, 3vw, 56px); padding:0 3%; }
+.rol{ display:flex; flex-direction:column-reverse; justify-content:flex-start; align-items:center; gap:14px; margin-bottom:calc(-1 * clamp(20px, 3vw, 44px)); }
+.rol .block{ text-align:center; max-width:260px; padding:14px 16px; }
+.rol .block::after{ content:''; position:absolute; left:50%; bottom:-10px; width:18px; height:18px; margin-left:-9px; background:var(--c); transform:rotate(45deg); box-shadow:3px 3px 0 var(--mbc-line); }
+.rol-figura{ width:clamp(84px, 9vw, 128px); height:auto; transform-origin:50% 100%; }
+
+/* Piso 3 · Planes */
+.planes{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+.planes-lista{ display:grid; grid-template-columns:repeat(3, minmax(0, 230px)); gap:clamp(16px, 2.4vw, 34px); margin-top:26px; align-items:end; }
+.plan{ padding:18px 18px 20px; display:flex; flex-direction:column; align-items:center; }
+.plan.destacado{ transform:translateY(-14px); }
+.plan-sello{ position:absolute; top:-12px; right:14px; }
+.plan-maqueta{ width:84px; height:auto; margin-bottom:6px; }
+.plan-nombre{ font-size:24px!important; }
+.plan-precio{ margin-top:10px; font:800 46px/1 var(--mbc-f-display); }
+.plan-precio small{ font:500 14px var(--mbc-f-mono); margin:0 3px; }
+.planes-incluye{ margin-top:22px; font-size:12px; letter-spacing:.04em; padding:8px 14px; border-radius:10px; background:rgba(255,255,255,.72); }
+
+/* Piso 2 · Sobre nosotros */
+.nosotros{ display:flex; flex-direction:column; justify-content:space-between; }
+.nosotros-texto{ max-width:640px; }
+.equipo{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; max-width:760px; margin-left:auto; }
+.miembro{ text-align:center; padding:14px 12px 16px; }
+.miembro-figura{ width:64px; height:auto; display:block; margin:-44px auto 8px; }
+.miembro b{ font-size:16px!important; }
+.miembro .mono{ font-size:11px!important; letter-spacing:.06em; text-transform:uppercase; }
+
+/* Piso 1 · Preguntas */
+.faq{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:22px 18px; max-width:min(76%, 920px); margin-top:24px; align-items:start; }
+.faq details{ padding:0; }
+.faq summary{
+  list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  min-height:56px; padding:14px 18px; font:700 18px/1.2 var(--mbc-f-display);
+}
+.faq summary::-webkit-details-marker{ display:none; }
+.faq summary::after{ content:'+'; flex:none; width:28px; height:28px; border-radius:8px; display:grid; place-items:center; background:var(--mbc-ink); color:var(--mbc-acc-fg); font:700 18px/1 var(--mbc-f-mono); transition:transform .35s var(--mbc-ease); }
+.faq details[open] summary::after{ transform:rotate(45deg); }
+.faq details p{ padding:0 18px 16px; font-size:var(--mbc-t-small); color:var(--mbc-ink-2); }
+
+/* Planta baja · Contacto */
+.contacto{ display:grid; grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr); gap:clamp(20px, 3.5vw, 56px); align-items:center; }
+.contacto-cta{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:22px; max-width:440px; padding:16px 18px; }
+.pie{ margin-top:18px; font-size:11px; letter-spacing:.06em; color:var(--mbc-ink-2); }
+.formulario{ padding:22px; }
+.form-grid.dos{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+.trampa{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.form-pie{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:16px; }
+.obra-mini{ display:flex; align-items:flex-end; gap:3px; height:44px; }
+.obra-mini i{ width:14px; border-radius:4px; background:var(--c); box-shadow:inset 0 0 0 2px var(--mbc-ink); }
+.enviado{ position:absolute; inset:0; border-radius:var(--mbc-r-lg); background:var(--mbc-surface); display:grid; place-content:center; justify-items:center; gap:16px; text-align:center; padding:24px; }
+.enviado[hidden]{ display:none; }
+.sello{
+  padding:14px 22px; border-radius:14px; border:4px solid var(--mbc-ink); transform:rotate(-8deg);
+  font:800 30px/1 var(--mbc-f-display); letter-spacing:.04em; color:var(--mbc-ink); background:var(--mbc-mint);
+}
+
+/* ── Pantallas medianas y celular ──────────────────────────── */
+@media (max-height: 760px){
+  .t-piso{ font-size:clamp(28px, 3vw, 42px); margin:10px 0 8px; }
+  .lede{ font-size:16px; }
+  .meta b{ font-size:34px; }
+  .metas{ margin-top:22px; }
+}
+@media (max-width: 1100px){
+  .herramientas, .faq, .pasos{ max-width:100%; }
+  .acabados .ac.opc{ display:none; }
+}
+@media (max-width: 767.98px){
+  html.js:not(.sin-movimiento) .contenido{ overflow-y:auto; overscroll-behavior:contain; }
+  .contenido{ padding:18px 16px 24px; }
+  .problema, .contacto{ grid-template-columns:1fr; }
+  .col-escena{ display:none; }
+  .herramientas, .faq, .equipo{ grid-template-columns:1fr 1fr; gap:14px; }
+  .pasos{ grid-template-columns:1fr 1fr; gap:14px; }
+  .pasos .block::after{ display:none; }
+  .roles-lista{ grid-template-columns:1fr; gap:12px; }
+  .rol{ flex-direction:row; margin:0; }
+  .rol .block::after{ display:none; }
+  .planes-lista{ grid-template-columns:1fr; }
+  .plan.destacado{ transform:none; }
+  .form-grid.dos{ grid-template-columns:1fr; }
+  .equipo{ margin:40px 0 0; }
+  .rotulo{ right:20px; }
+}
+
+/* ── Sin JS o "reducir movimiento": todo construido, scroll normal ─ */
+html.no-js .piso, html.sin-movimiento .piso{ height:auto; min-height:100vh; padding:var(--techo) 0 0; }
+html.no-js .sala, html.sin-movimiento .sala{ position:relative; top:auto; bottom:auto; min-height:calc(100vh - var(--techo) - var(--umbral)); margin-bottom:calc(var(--umbral) + 16px); }
+html.no-js .contenido, html.sin-movimiento .contenido{ position:relative; visibility:visible!important; }
+html.no-js .tarrajeo, html.no-js .pintura, html.sin-movimiento .tarrajeo, html.sin-movimiento .pintura{ clip-path:none; }
+html.no-js .plano, html.sin-movimiento .plano{ display:none; }
+html.no-js .acabados .ac, html.sin-movimiento .acabados .ac{ opacity:1; }
+html.no-js #carga, html.sin-movimiento #carga{ display:none; }
+
+/* Ajustes */
+.meta b span{ display:inline; font:inherit; color:inherit; margin:0; }
+.contenido.solucion, .contenido.funciona, .contenido.preguntas, .contenido.planes{ display:flex; flex-direction:column; justify-content:safe center; }
+.contenido.solucion, .contenido.funciona, .contenido.preguntas{ align-items:flex-start; }
+.contenido.planes{ align-items:center; }
+.letrero{
+  transform:translateX(-50%); padding:10px 26px; border-radius:14px; background:var(--mbc-ink); color:var(--mbc-acc-fg);
+  font:800 22px/1 var(--mbc-f-display); letter-spacing:.14em; box-shadow:0 6px 0 rgba(0,0,0,.18);
+}

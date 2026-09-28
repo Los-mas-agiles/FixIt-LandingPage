@@ -1,0 +1,29 @@
+/* ═══════════════════════════════════════════════════════════════
+   Pantalla de carga: puertas del ascensor + grúa armando la marca
+   ═══════════════════════════════════════════════════════════════ */
+
+#carga{ position:fixed; inset:0; z-index:200; display:grid; place-items:center; color:var(--mbc-acc-fg); }
+.puerta{
+  position:absolute; top:0; bottom:0; width:50.5%;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 2px, transparent 2px 38px),
+    #262626;
+}
+.puerta.izq{ left:0; box-shadow:inset -6px 0 0 var(--mbc-acc-fg), inset -10px 0 0 #1B1B1B; }
+.puerta.der{ right:0; box-shadow:inset 6px 0 0 var(--mbc-acc-fg), inset 10px 0 0 #1B1B1B; }
+.carga-centro{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:14px; padding:28px 36px 32px; text-align:center;
+  border-radius:28px; background:#262626; box-shadow:inset 0 0 0 2px rgba(245,230,163,.16), 0 10px 0 rgba(0,0,0,.35);
+}
+.grua{ width:min(420px, 82vw); height:auto; overflow:visible; }
+.carga-estado{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mbc-acc-fg-2); }
+.carga-pct{ display:inline-block; min-width:5ch; text-align:right; color:var(--mbc-acc-fg); }
+.carga-barra{ width:min(300px, 70vw); height:10px; border-radius:5px; background:rgba(245,230,163,.14); overflow:hidden; }
+.carga-barra span{
+  display:block; height:100%; border-radius:5px; transform-origin:left; transform:scaleX(0);
+  background:repeating-linear-gradient(135deg, var(--mbc-acc-fg) 0 10px, #DCD3AE 10px 20px);
+}
+.carga-titulo{ font:800 clamp(48px, 7vw, 80px)/1 var(--mbc-f-display); opacity:0; }
+.carga-botones{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; }
+.carga-botones[hidden]{ display:none; }
+.carga-botones .btn:not(.ghost-oscuro){ background:var(--mbc-acc-fg); color:var(--mbc-ink); --bs:rgba(0,0,0,.55); }

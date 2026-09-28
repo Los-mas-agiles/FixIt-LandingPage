@@ -1,0 +1,230 @@
+/* ═══════════════════════════════════════════════════════════════
+   Cabina del ascensor: marco fijo, vidrio, techo (display), umbral
+   y botonera. Nunca cambia de estilo; lo que cambia son los pisos.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root{
+  --h: 100vh;                 /* alto de un piso = alto de la ventana (JS lo fija en px) */
+  --techo: 66px;              /* techo de la cabina */
+  --umbral: 54px;             /* umbral / piso de la cabina */
+  --jamba: 14px;              /* marco lateral */
+  --panel: 84px;              /* columna de la botonera */
+  --vid-l: var(--jamba);
+  --vid-r: calc(var(--jamba) + var(--panel));
+
+  /* Edificio: ancho y bordes, dentro del vidrio */
+  --glass-w: calc(100vw - var(--vid-l) - var(--vid-r));
+  --ed-m: clamp(0px, 5vw, 110px);
+  --ed-w: min(1240px, calc(var(--glass-w) - 2 * var(--ed-m)));
+  --ed-l: calc(var(--vid-l) + (var(--glass-w) - var(--ed-w)) / 2);
+
+  /* Cielo (JS los interpola en cada viaje) */
+  --cielo-a: #F4B79A;
+  --cielo-b: #F9E3B0;
+  --noche: 0;
+  --luna: 0;
+  --sol-y: 62;
+  --lluvia: 0;
+
+  --concreto: #D8D2C4;
+  --concreto-d: #BDB6A6;
+  --bt: clamp(30px, calc((100vh - 290px) / 10), 44px);   /* tamaño de botón de piso */
+}
+@media (max-width: 767.98px){
+  :root{ --techo: 58px; --umbral: 44px; --jamba: 8px; --panel: 0px; --ed-m: 0px; }
+}
+
+html.js:not(.sin-movimiento), html.js:not(.sin-movimiento) body{ overflow:hidden; height:100%; overscroll-behavior:none; }
+
+/* ── Cielo ─────────────────────────────────────────────────── */
+#cielo{
+  position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
+  background:linear-gradient(to bottom, var(--cielo-a) 0%, var(--cielo-b) 78%);
+}
+.cielo-estrellas{
+  position:absolute; inset:0 0 30% 0; opacity:var(--noche);
+  background-image:
+    radial-gradient(1.6px 1.6px at 22px 34px, #FFF6D6 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 130px 80px, #FFF6D6 50%, transparent 52%),
+    radial-gradient(2px 2px at 200px 20px, #FFF6D6 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 90px 150px, #FFF6D6 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 250px 130px, #FFF6D6 50%, transparent 52%),
+    radial-gradient(1px 1px at 300px 60px, #FFF6D6 50%, transparent 52%);
+  background-size:320px 180px;
+  animation:titilar 4s steps(2) infinite;
+}
+@keyframes titilar{ 50%{ opacity:calc(var(--noche) * .7); } }
+.cielo-sol{
+  position:absolute; left:52%; top:calc(var(--sol-y) * 1%); width:clamp(120px, 16vw, 230px); aspect-ratio:1; border-radius:50%;
+  background:#FFF1C2; box-shadow:0 0 0 18px rgba(255,241,194,.35), 0 0 0 40px rgba(255,241,194,.15);
+  opacity:calc(1 - var(--noche) * 1.4);
+}
+.cielo-luna{
+  position:absolute; right:26%; top:12%; width:clamp(60px, 7vw, 100px); aspect-ratio:1; border-radius:50%;
+  background:#FFF6D6; box-shadow:inset -14px -6px 0 rgba(0,0,0,.08), 0 0 0 14px rgba(255,246,214,.08);
+  opacity:var(--luna);
+}
+.cielo-nubes{ position:absolute; inset:0; opacity:calc(.9 - var(--noche) * .6); }
+.nube{
+  position:absolute; height:34px; border-radius:20px; background:#FFFFFF;
+  filter:drop-shadow(0 6px 0 rgba(0,0,0,.05));
+  animation:nube 70s linear infinite;
+}
+.nube::before,.nube::after{ content:''; position:absolute; bottom:12px; border-radius:50%; background:#FFFFFF; }
+.nube::before{ left:18%; width:46px; height:46px; }
+.nube::after{ left:44%; width:64px; height:64px; }
+.n1{ top:12%; left:-10%; width:150px; }
+.n2{ top:26%; left:-30%; width:210px; animation-duration:95s; animation-delay:-40s; }
+.n3{ top:6%;  left:-20%; width:120px; animation-duration:80s; animation-delay:-65s; }
+@keyframes nube{ to{ transform:translateX(140vw); } }
+
+.ciudad{ position:absolute; left:0; width:100%; height:62vh; bottom:0; will-change:transform; }
+.ciudad-lejos{ opacity:calc(.22 + var(--noche) * .5); }
+.ciudad-cerca{ opacity:calc(.38 + var(--noche) * .45); }
+.ciudad .edif{ fill:#2C2C2C; }
+.ciudad-lejos .edif{ fill:#4A4570; }
+.ciudad .vent{ fill:#F5E6A3; opacity:var(--noche); }
+
+.cielo-lluvia{
+  position:absolute; inset:-20% 0 0 0; opacity:var(--lluvia);
+  background:repeating-linear-gradient(105deg, transparent 0 22px, rgba(255,255,255,.45) 22px 24px, transparent 24px 60px);
+  background-size:120px 120px; animation:lluvia .5s linear infinite;
+}
+@keyframes lluvia{ to{ background-position:-30px 120px; } }
+
+/* ── Marco + vidrio ────────────────────────────────────────── */
+#cabina{ position:fixed; inset:0; z-index:50; pointer-events:none; }
+.vidrio{
+  position:absolute; top:var(--techo); left:var(--vid-l); right:var(--vid-r); bottom:var(--umbral);
+  border-radius:22px; overflow:hidden;
+  /* La sombra enorme pinta el marco de la cabina alrededor del vidrio */
+  box-shadow:0 0 0 200vmax var(--mbc-acc-bg), inset 0 0 0 3px rgba(245,230,163,.22), inset 0 7px 0 rgba(0,0,0,.22);
+}
+.reflejo{
+  position:absolute; top:-10%; bottom:-10%; width:110px; transform:skewX(-18deg);
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.09) 40%, rgba(255,255,255,0));
+  transition:transform 1.2s var(--mbc-ease);
+}
+.r1{ left:9%; } .r2{ left:15%; width:40px; }
+.velocidad{
+  position:absolute; inset:0; opacity:0; transition:opacity .25s var(--mbc-ease);
+  background:repeating-linear-gradient(90deg, transparent 0 7%, rgba(255,255,255,.14) 7% 7.25%, transparent 7.25% 19%);
+  background-size:100% 100%;
+}
+body.viajando .velocidad{ opacity:1; }
+body.viajando .reflejo{ transform:skewX(-18deg) translateX(18px); }
+.pasamanos{
+  position:absolute; left:calc(var(--vid-l) + 26px); right:calc(var(--vid-r) + 26px); bottom:calc(var(--umbral) - 5px); height:10px;
+  border-radius:6px; background:#8C8C8C; box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 3px 0 rgba(0,0,0,.35);
+}
+
+/* ── Techo de la cabina: marca, display y acciones ─────────── */
+.techo-cabina{
+  position:fixed; top:0; left:0; right:0; height:var(--techo); z-index:60;
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px;
+  padding:0 var(--jamba) 0 calc(var(--jamba) + 8px); color:var(--mbc-acc-fg);
+}
+.techo-cabina::after{   /* luces del techo */
+  content:''; position:absolute; left:calc(var(--vid-l) + 40px); right:calc(var(--vid-r) + 40px); bottom:5px; height:4px;
+  background:repeating-linear-gradient(90deg, rgba(245,230,163,.55) 0 26px, transparent 26px 40px); border-radius:2px;
+}
+.marca{ display:inline-flex; align-items:center; gap:10px; text-decoration:none; justify-self:start; font:800 24px/1 var(--mbc-f-display); }
+.marca svg{ width:34px; height:34px; }
+.display{
+  display:flex; align-items:center; gap:10px; min-width:220px; justify-content:center;
+  padding:6px 16px; border-radius:12px; background:#1B1B1B; box-shadow:inset 0 0 0 2px rgba(245,230,163,.18), 0 4px 0 rgba(0,0,0,.4);
+}
+.display-flecha{ font:700 12px var(--mbc-f-mono); width:14px; text-align:center; }
+.display-piso{ font:700 28px/1 var(--mbc-f-mono); min-width:2ch; text-align:center; letter-spacing:.02em; text-shadow:0 0 0 currentColor; }
+.display-nombre{ font:500 12px/1 var(--mbc-f-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--mbc-acc-fg-2); white-space:nowrap; }
+.techo-acciones{ justify-self:end; display:flex; align-items:center; gap:10px; padding-right:calc(var(--panel) - 70px); }
+.techo-cabina .btn{ background:var(--mbc-acc-fg); color:var(--mbc-ink); --bs:rgba(0,0,0,.55); }
+.btn-sonido{
+  width:40px; height:40px; border:0; border-radius:12px; display:grid; place-items:center;
+  background:transparent; color:var(--mbc-acc-fg); box-shadow:inset 0 0 0 2px rgba(245,230,163,.45);
+  transition:transform var(--mbc-d-release) var(--mbc-ease);
+}
+.btn-sonido:active{ transform:scale(.92); }
+.btn-sonido .mute{ display:none; }
+.btn-sonido[aria-pressed="false"] .onda{ display:none; }
+.btn-sonido[aria-pressed="false"] .mute{ display:block; }
+
+/* ── Umbral (piso de la cabina) ────────────────────────────── */
+.umbral-cabina{
+  position:fixed; left:0; right:0; bottom:0; height:var(--umbral); z-index:60; pointer-events:none;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 calc(var(--vid-r) + 10px) 10px calc(var(--vid-l) + 10px);
+  color:var(--mbc-acc-fg-2); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+}
+.umbral-cabina::before{   /* cinta de obra en el borde del umbral */
+  content:''; position:absolute; left:calc(var(--vid-l) + 60px); right:calc(var(--vid-r) + 60px); top:12px; height:6px; border-radius:3px;
+  background:repeating-linear-gradient(135deg, var(--mbc-acc-fg) 0 8px, transparent 8px 16px); opacity:.5;
+}
+
+/* ── Botonera ──────────────────────────────────────────────── */
+#botonera{
+  position:fixed; z-index:70; right:var(--jamba); top:calc(var(--techo) + 6px); bottom:calc(var(--umbral) + 6px);
+  width:calc(var(--panel) - 10px); padding:12px 10px 10px;
+  display:flex; flex-direction:column; align-items:stretch; gap:10px;
+  border-radius:20px; background:#383838; color:var(--mbc-acc-fg); overflow:hidden;
+  box-shadow:inset 0 0 0 2px rgba(245,230,163,.14), inset 0 -6px 0 rgba(0,0,0,.25);
+  transition:width .45s var(--mbc-ease), box-shadow .3s var(--mbc-ease);
+}
+#botonera:hover, #botonera:has(:focus-visible), #botonera.abierta{
+  width:272px; box-shadow:inset 0 0 0 2px rgba(245,230,163,.3), inset 0 -6px 0 rgba(0,0,0,.25), -10px 0 0 rgba(0,0,0,.25);
+}
+.bt-cabeza{ display:flex; justify-content:center; }
+.bt-display{
+  display:block; width:100%; max-width:56px; padding:6px 0; border-radius:10px; text-align:center;
+  background:#1B1B1B; font:700 18px/1 var(--mbc-f-mono); box-shadow:inset 0 0 0 2px rgba(245,230,163,.18);
+}
+#botonera:hover .bt-display, #botonera:has(:focus-visible) .bt-display, #botonera.abierta .bt-display{ max-width:100%; }
+.bt-lista{ flex:1; display:flex; flex-direction:column; justify-content:space-evenly; gap:4px; min-height:0; }
+.bt-ir{
+  display:flex; align-items:center; gap:14px; width:100%; padding:0; border:0; background:none; color:inherit; text-align:left;
+  border-radius:calc(var(--bt) / 2 + 4px);
+}
+.bt-boton{
+  flex:none; width:var(--bt); height:var(--bt); margin-left:calc((var(--panel) - 30px - var(--bt)) / 2); border-radius:50%;
+  display:grid; place-items:center; background:#262626; font:700 13px/1 var(--mbc-f-mono);
+  box-shadow:inset 0 0 0 2px rgba(245,230,163,.38), 0 4px 0 #151515;
+  transition:transform var(--mbc-d-release) var(--mbc-ease), background .25s var(--mbc-ease), color .25s var(--mbc-ease), box-shadow .25s var(--mbc-ease);
+}
+.bt-nombre{
+  font:600 14px/1.1 var(--mbc-f-body); white-space:nowrap; opacity:0; transform:translateX(-10px);
+  transition:opacity .3s var(--mbc-ease), transform .45s var(--mbc-ease);
+}
+.bt-nombre small{ display:block; font:500 10px/1.4 var(--mbc-f-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--mbc-acc-fg-2); }
+#botonera:hover .bt-nombre, #botonera:has(:focus-visible) .bt-nombre, #botonera.abierta .bt-nombre{ opacity:1; transform:none; }
+.bt-ir:hover .bt-boton{ box-shadow:inset 0 0 0 2px var(--mbc-acc-fg), 0 4px 0 #151515; }
+.bt-ir:active .bt-boton{ transform:translateY(3px); box-shadow:inset 0 0 0 2px var(--mbc-acc-fg), 0 1px 0 #151515; }
+.bt-ir[aria-current="true"] .bt-boton{
+  background:var(--mbc-acc-fg); color:var(--mbc-ink);
+  box-shadow:0 0 0 4px rgba(245,230,163,.22), 0 4px 0 #8F8660;
+}
+.bt-ir.destino .bt-boton{ animation:destino .5s steps(2) infinite; }
+@keyframes destino{ 50%{ background:var(--mbc-acc-fg); color:var(--mbc-ink); } }
+.bt-ir:focus-visible{ outline:3px solid var(--mbc-acc-fg); outline-offset:2px; }
+#botonera:not(:hover):not(:has(:focus-visible)):not(.abierta) .bt-pie{ visibility:hidden; }
+.bt-pie{ text-align:center; font-size:9px; letter-spacing:.12em; color:var(--mbc-acc-fg-2); opacity:.7; white-space:nowrap; }
+
+.bt-movil{ display:none; }
+@media (max-width: 767.98px){
+  .techo-cabina{ grid-template-columns:auto 1fr auto; }
+  .marca span, .techo-acciones .btn, .display-nombre, .umbral-pista{ display:none; }
+  .display{ min-width:0; justify-self:center; }
+  #botonera{ width:236px; transform:translateX(calc(100% + 20px)); transition:transform .45s var(--mbc-ease); }
+  #botonera.abierta{ transform:none; width:236px; }
+  #botonera .bt-nombre{ opacity:1; transform:none; }
+  .bt-boton{ margin-left:4px; }
+  .bt-movil{
+    display:grid; place-items:center; position:fixed; z-index:71; right:14px; bottom:calc(var(--umbral) + 14px);
+    width:56px; height:56px; border:0; border-radius:50%; background:var(--mbc-acc-fg); color:var(--mbc-ink);
+    font:700 17px/1 var(--mbc-f-mono); filter:drop-shadow(0 5px 0 rgba(0,0,0,.4));
+  }
+}
+
+/* ── Sin JS o "reducir movimiento": sin cabina, página normal ─ */
+html.no-js #cabina, html.sin-movimiento #cabina,
+html.no-js .umbral-cabina, html.sin-movimiento .umbral-cabina{ display:none; }
+html.no-js .techo-cabina, html.sin-movimiento .techo-cabina{ background:var(--mbc-acc-bg); }

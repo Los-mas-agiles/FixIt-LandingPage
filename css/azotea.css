@@ -1,0 +1,30 @@
+/* ═══════════════════════════════════════════════════════════════
+   Azotea (hero): atardecer y objetos interactivos
+   ═══════════════════════════════════════════════════════════════ */
+
+.azotea .sala{ bottom:calc(var(--umbral) - 30px); }
+.azotea .contenido{ bottom:auto; max-width:min(680px, 100%); padding-top:clamp(20px, 5vh, 64px); }
+.azotea .suelo{ height:calc(var(--umbral) - 30px); --acabado:var(--concreto); }
+
+.hero-titulo{ margin:12px 0 16px; }
+.hero-marca{ display:flex; align-items:center; gap:.18em; font:800 clamp(64px, 9.5vw, 140px)/.9 var(--mbc-f-display); letter-spacing:-.03em; }
+.hero-logo{ width:.82em; height:.82em; flex:none; transform:translateY(-.04em); }
+.hero-lema{ display:block; margin-top:8px; font:700 clamp(26px, 3.2vw, 46px)/1.05 var(--mbc-f-display); letter-spacing:-.01em; }
+.hero-texto{ color:var(--mbc-ink); }
+.hero-acciones{ margin-top:26px; gap:16px; }
+.hero-pista{ margin-left:6px; font-size:11px; line-height:1.4; letter-spacing:.08em; text-transform:uppercase; color:var(--mbc-ink-2); }
+
+.azotea-escena{ position:absolute; left:0; bottom:0; width:100%; height:min(44%, 40vw); overflow:visible; }
+.az-obj{ cursor:pointer; }
+.az-rotulo{ font:700 13px var(--mbc-f-mono); letter-spacing:.1em; fill:#F5E6A3; }
+.az-rotulo.tinta{ fill:#2C2C2C; }
+.az-luz{ animation:baliza 1.6s steps(1) infinite; }
+@keyframes baliza{ 50%{ fill:#FFF6D6; } }
+.az-paloma{ cursor:pointer; }
+
+@media (max-width: 767.98px){
+  .azotea .contenido{ padding-top:18px; }
+  .hero-acciones .btn{ flex:1 1 auto; }
+  .hero-pista{ display:none; }
+  .azotea-escena{ height:38%; }
+}
