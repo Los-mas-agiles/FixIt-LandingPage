@@ -407,10 +407,10 @@
           </ul>
         </div>
         <div class="col-escena">
-          <div class="reloj" aria-hidden="true"><span class="reloj-dia">VIE</span><span class="reloj-hora">21:40</span></div>
+          <div class="reloj" aria-hidden="true" data-no-traducir><span class="reloj-dia">VIE</span><span class="reloj-hora">21:40</span></div>
           <div class="telefono" aria-hidden="true">
             <div class="tel-cabeza"><span class="tel-avatar"></span><div><b>Vecinos Torre Sol 🏢</b><small>48 participantes</small></div></div>
-            <div class="tel-chat"></div>
+            <div class="tel-chat" data-no-traducir></div>
           </div>
           <p class="reloj-nota mono" aria-hidden="true">…y recién el lunes alguien lo lee.</p>
         </div>
@@ -798,10 +798,10 @@
         </div>
         <form class="formulario block" style="--c:#FFFFFF" novalidate>
           <div class="form-grid dos">
-            <div class="field"><div class="f-box"><input class="f-in" id="f-nombre" name="nombre" placeholder=" " autocomplete="name" required /><label for="f-nombre">Tu nombre</label><span class="pour"></span></div><p class="err" id="e-nombre"></p></div>
-            <div class="field"><div class="f-box"><input class="f-in" id="f-correo" name="correo" type="email" placeholder=" " autocomplete="email" required /><label for="f-correo">Correo</label><span class="pour"></span></div><p class="err" id="e-correo"></p></div>
-            <div class="field"><div class="f-box"><input class="f-in" id="f-edificio" name="edificio" placeholder=" " required /><label for="f-edificio">Nombre del edificio</label><span class="pour"></span></div><p class="err" id="e-edificio"></p></div>
-            <div class="field"><div class="f-box"><input class="f-in" id="f-dptos" name="dptos" type="number" min="1" max="999" inputmode="numeric" placeholder=" " required /><label for="f-dptos">N.º de departamentos</label><span class="pour"></span></div><p class="err" id="e-dptos"></p></div>
+            <div class="field"><div class="f-box"><input class="f-in" id="f-nombre" name="nombre" placeholder=" " autocomplete="name" required /><label for="f-nombre">Tu nombre</label><span class="pour"></span></div><p data-no-traducir class="err" id="e-nombre"></p></div>
+            <div class="field"><div class="f-box"><input class="f-in" id="f-correo" name="correo" type="email" placeholder=" " autocomplete="email" required /><label for="f-correo">Correo</label><span class="pour"></span></div><p data-no-traducir class="err" id="e-correo"></p></div>
+            <div class="field"><div class="f-box"><input class="f-in" id="f-edificio" name="edificio" placeholder=" " required /><label for="f-edificio">Nombre del edificio</label><span class="pour"></span></div><p data-no-traducir class="err" id="e-edificio"></p></div>
+            <div class="field"><div class="f-box"><input class="f-in" id="f-dptos" name="dptos" type="number" min="1" max="999" inputmode="numeric" placeholder=" " required /><label for="f-dptos">N.º de departamentos</label><span class="pour"></span></div><p data-no-traducir class="err" id="e-dptos"></p></div>
             <div class="field"><div class="f-box"><input class="f-in" id="f-distrito" name="distrito" placeholder=" " /><label for="f-distrito">Distrito</label><span class="pour"></span></div></div>
             <div class="field"><div class="f-box"><input class="f-in" id="f-telefono" name="telefono" type="tel" placeholder=" " autocomplete="tel" /><label for="f-telefono">Teléfono (opcional)</label><span class="pour"></span></div></div>
           </div>
@@ -831,12 +831,16 @@
   <a class="marca" href="#azotea" data-ir="azotea" aria-label="FixIt, ir a la azotea">
     <svg aria-hidden="true"><use href="#k-marca"/></svg><span>FixIt</span>
   </a>
-  <div class="display" aria-live="polite">
+  <div class="display" aria-live="polite" data-no-traducir>
     <span class="display-flecha" aria-hidden="true">■</span>
     <span class="display-piso">AZ</span>
     <span class="display-nombre">Azotea</span>
   </div>
   <div class="techo-acciones">
+    <div class="idioma-sel" role="group" aria-label="Idioma"><button type="button" data-idioma="es" aria-pressed="true" lang="es">ES</button><button type="button" data-idioma="en" aria-pressed="false" lang="en">EN</button></div>
+    <button class="bt-movil" type="button" aria-controls="botonera" aria-expanded="false" aria-label="Abrir la botonera">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="4"/><path d="M12 6.5 9.5 9.5h5zM12 17.5l-2.5-3h5z" fill="currentColor"/></svg>
+    </button>
     <button class="btn-sonido" type="button" aria-pressed="false" aria-label="Efectos de sonido">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="onda" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/><path class="mute" d="M16 9l5 6M21 9l-5 6"/></svg>
     </button>
@@ -850,11 +854,11 @@
 </div>
 
 <nav id="botonera" aria-label="Botonera del ascensor">
-  <div class="bt-cabeza" aria-hidden="true"><span class="bt-display">AZ</span></div>
-  <ol class="bt-lista"></ol>
+  <div class="bt-cabeza" aria-hidden="true" data-no-traducir><span class="bt-display">AZ</span></div>
+  <ol class="bt-lista" data-no-traducir></ol>
   <p class="bt-pie mono" aria-hidden="true">FIXIT · CAP. 8</p>
 </nav>
-<button class="bt-movil" type="button" aria-controls="botonera" aria-expanded="false"><span class="bt-movil-piso">AZ</span><span class="sr">Abrir la botonera</span></button>
+<div class="pista-deslizar" aria-hidden="true"><span class="flecha">︿</span><span class="flecha">︿</span><span class="texto">Desliza para bajar</span></div>
 
 <!-- ═════════ PANTALLA DE CARGA: puertas del ascensor ═════════ -->
 <div id="carga" aria-hidden="true">
@@ -874,9 +878,11 @@
       <g id="grua-carro"><rect x="-14" y="66" width="28" height="12" rx="4" fill="#F5E6A3"/><line id="grua-cable" x1="0" y1="78" x2="0" y2="120" stroke="#F5E6A3" stroke-width="2.5"/><g id="grua-gancho"><path d="M-6 0H6L0 10Z" fill="#F5E6A3"/></g></g>
       <g id="grua-bloques"></g>
     </svg>
-    <p class="carga-estado mono"><span class="carga-texto">Construyendo el edificio</span> <span class="carga-pct">0 %</span></p>
+    <p class="carga-estado mono"><span class="carga-texto" data-no-traducir>Construyendo el edificio</span> <span class="carga-pct">0 %</span></p>
     <div class="carga-barra"><span></span></div>
     <h2 id="carga-titulo" class="carga-titulo">FixIt</h2>
+    <button class="btn grande carga-iniciar" type="button" hidden>Iniciar</button>
+    <div class="idioma-sel" role="group" aria-label="Idioma"><button type="button" data-idioma="es" aria-pressed="true" lang="es">ES</button><button type="button" data-idioma="en" aria-pressed="false" lang="en">EN</button></div>
   </div>
 </div>
 

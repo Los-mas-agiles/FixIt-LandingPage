@@ -20,7 +20,16 @@ La página es un edificio y el visitante baja en un ascensor con vidrio, desde l
 | 1 | Preguntas frecuentes |
 | PB | Recepción: formulario de contacto + "Ir a FixIt" |
 
-Se navega con la rueda del mouse, las flechas, deslizando en celular o con la **botonera** (a la derecha; se abre al pasar el mouse).
+Se navega con la rueda del mouse, las flechas, deslizando en celular o con la **botonera** (a la derecha; se abre al pasar el mouse; en celular, con el botón del techo).
+
+Al terminar la carga aparece un único botón **Iniciar**: abre las puertas del ascensor y, como es un clic, también desbloquea el sonido (los navegadores no dejan reproducir audio sin un gesto de la persona). El sonido viene activado por defecto y se puede apagar desde el techo de la cabina.
+
+## Idiomas (español / inglés)
+
+- El HTML está escrito en **español**; `js/i18n.js` tiene el diccionario **español → inglés** y traduce solo los textos y atributos de la página.
+- **Para agregar un texto nuevo** al HTML: sumarlo a `EN` en `js/i18n.js` con su traducción. Si no está, queda en español.
+- Los textos que arma JavaScript (chat, reloj, errores del formulario, botonera, carga) se piden con `t('clave')` y se redibujan con el evento `idioma`.
+- Idioma inicial: `?lang=en` en la URL → la elección guardada → el idioma del navegador. Se cambia con el selector ES/EN (en la carga y en el techo).
 
 ## Tecnología
 
@@ -42,6 +51,7 @@ js/azotea.js      objetos interactivos de la azotea
 js/carga.js       pantalla de carga (grúa + puertas)
 js/contacto.js    formulario (envío SIMULADO)
 js/sonido.js      efectos de sonido
+js/i18n.js        idiomas (diccionario ES → EN y función t)
 js/ciudad.js      siluetas de la ciudad del fondo
 ```
 

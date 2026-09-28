@@ -3,6 +3,7 @@
 import * as S from './sonido.js'
 import { construir } from './obra.js'
 import { alConstruir, activarBucles } from './escenas.js'
+import { t } from './i18n.js'
 
 const gsap = window.gsap
 const raiz = document.documentElement
@@ -16,7 +17,6 @@ const display = {
   piso: document.querySelector('.display-piso'),
   nombre: document.querySelector('.display-nombre'),
   panel: document.querySelector('.bt-display'),
-  movil: document.querySelector('.bt-movil-piso'),
 }
 const lejos = document.querySelector('.ciudad-lejos')
 const cerca = document.querySelector('.ciudad-cerca')
@@ -62,14 +62,24 @@ function medir() {
   gsap.set(cerca, { y: p.cerca })
 }
 
+function rotular(b, p) {
+  const sub = p.id === 'azotea' ? t('bt.azotea') : p.id === 'lobby' ? t('bt.pb') : `${t('bt.piso')} ${p.dataset.etiqueta}`
+  b.setAttribute('aria-label', `${t('bt.ir')} ${p.dataset.nombre}`)
+  b.innerHTML = `<span class="bt-boton">${p.dataset.etiqueta}</span><span class="bt-nombre">${p.dataset.nombre}<small>${sub}</small></span>`
+}
+// Al cambiar de idioma se vuelven a rotular la botonera y el display
+document.addEventListener('idioma', () => {
+  botones.forEach((b, i) => rotular(b, pisos[i]))
+  if (botones.length) mostrar(viajando ? mostrado : actual)
+})
+
 function crearBotonera(alElegir) {
   pisos.forEach((p, i) => {
     const li = document.createElement('li')
     const b = document.createElement('button')
     b.type = 'button'
     b.className = 'bt-ir'
-    b.setAttribute('aria-label', `Ir a ${p.dataset.nombre}`)
-    b.innerHTML = `<span class="bt-boton">${p.dataset.etiqueta}</span><span class="bt-nombre">${p.dataset.nombre}<small>${p.dataset.etiqueta === 'AZ' ? 'Azotea' : p.dataset.etiqueta === 'PB' ? 'Planta baja' : 'Piso ' + p.dataset.etiqueta}</small></span>`
+    rotular(b, p)
     b.addEventListener('click', () => {
       S.clic()
       botonera.classList.remove('abierta')
@@ -91,7 +101,6 @@ function mostrar(i, dir = 0) {
   display.piso.textContent = p.dataset.etiqueta
   display.nombre.textContent = p.dataset.nombre
   display.panel.textContent = p.dataset.etiqueta
-  display.movil.textContent = p.dataset.etiqueta
   display.flecha.textContent = dir > 0 ? '▼' : dir < 0 ? '▲' : '■'
 }
 
@@ -118,7 +127,7 @@ export function ir(destino, { instantaneo = false } = {}) {
   const px = paralaje(destino)
 
   viajando = true
-  document.body.classList.add('viajando')
+  document.body.classList.add('viajando', 'ya-viajo')
   botones[destino].classList.add('destino')
   mostrar(actual, dir)
   const pararMotor = instantaneo ? () => {} : S.motor()

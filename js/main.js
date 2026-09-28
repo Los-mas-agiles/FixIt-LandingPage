@@ -6,6 +6,7 @@ import { iniciarContacto } from './contacto.js'
 import { cargar } from './carga.js'
 import { dibujarCiudad } from './ciudad.js'
 import { prepararEscenas } from './escenas.js'
+import { iniciarIdioma, t } from './i18n.js'
 
 const gsap = window.gsap
 gsap.registerPlugin(window.Observer, window.CustomEase, window.SplitText)
@@ -24,7 +25,7 @@ const btnSonido = document.querySelector('.btn-sonido')
 const pintarSonido = () => {
   btnSonido.setAttribute('aria-pressed', String(S.sonidoActivo()))
   btnSonido.classList.toggle('pendiente', S.sonidoBloqueado())
-  btnSonido.title = S.sonidoBloqueado() ? 'Haz clic en la página para activar el sonido' : ''
+  btnSonido.title = S.sonidoBloqueado() ? t('sonido.bloqueado') : ''
 }
 btnSonido.addEventListener('click', () => {
   if (!S.recienDesbloqueado()) S.activarSonido(!S.sonidoActivo())
@@ -38,6 +39,8 @@ pintarSonido()
 
 dibujarCiudad()
 prepararEscenas()
+iniciarIdioma()
+document.addEventListener('idioma', pintarSonido)
 iniciarContacto()
 
 if (document.documentElement.classList.contains('sin-movimiento')) {
@@ -48,5 +51,5 @@ if (document.documentElement.classList.contains('sin-movimiento')) {
   const destino = destinoInicial()
   await cargar()
   const intro = entradaAzotea()
-  if (destino > 0) intro.eventCallback('onComplete', () => ir(destino))
+  if (destino > 0) intro.then(() => ir(destino))
 }

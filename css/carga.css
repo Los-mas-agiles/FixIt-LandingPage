@@ -13,7 +13,7 @@
 .puerta.der{ right:0; box-shadow:inset 6px 0 0 var(--mbc-acc-fg), inset 10px 0 0 #1B1B1B; }
 .carga-centro{
   position:relative; display:flex; flex-direction:column; align-items:center; gap:14px; padding:28px 36px 32px; text-align:center;
-  border-radius:28px; background:#262626; box-shadow:inset 0 0 0 2px rgba(245,230,163,.16), 0 10px 0 rgba(0,0,0,.35);
+  width:min(480px, calc(100vw - 32px)); border-radius:28px; background:#262626; box-shadow:inset 0 0 0 2px rgba(245,230,163,.16), 0 10px 0 rgba(0,0,0,.35);
 }
 .grua{ width:min(420px, 82vw); height:auto; overflow:visible; }
 .carga-estado{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mbc-acc-fg-2); }
@@ -24,3 +24,8 @@
   background:repeating-linear-gradient(135deg, var(--mbc-acc-fg) 0 10px, #DCD3AE 10px 20px);
 }
 .carga-titulo{ font:800 clamp(48px, 7vw, 80px)/1 var(--mbc-f-display); opacity:0; }
+.carga-iniciar{ min-width:200px; background:var(--mbc-acc-fg)!important; color:var(--mbc-ink)!important; --bs:rgba(0,0,0,.55); font-size:19px!important; }
+.carga-iniciar[hidden]{ display:none; }
+.carga-iniciar:not([hidden]){ animation:latido 1.6s var(--mbc-ease) infinite; }
+@keyframes latido{ 0%, 100%{ box-shadow:0 0 0 0 rgba(245,230,163,.45); } 60%{ box-shadow:0 0 0 14px rgba(245,230,163,0); } }
+.carga-centro .idioma-sel{ margin-top:4px; }

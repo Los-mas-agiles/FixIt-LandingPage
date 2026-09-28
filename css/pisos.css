@@ -256,7 +256,6 @@ html.js:not(.sin-movimiento) .piso{ overflow:hidden; }
   html.js:not(.sin-movimiento) .contenido{ overflow-y:auto; overscroll-behavior:contain; }
   .contenido{ padding:18px 16px 24px; }
   .problema, .contacto{ grid-template-columns:1fr; }
-  .col-escena{ display:none; }
   .herramientas, .faq, .equipo{ grid-template-columns:1fr 1fr; gap:14px; }
   .pasos{ grid-template-columns:1fr 1fr; gap:14px; }
   .pasos .block::after{ display:none; }
@@ -336,3 +335,22 @@ html.no-js #carga, html.sin-movimiento #carga{ display:none; }
   .funciona .meta b{ font-size:28px; }
 }
 .plan .plan-sello{ display:inline-flex; margin:0; font-size:var(--mbc-t-tag); background:var(--mbc-acc-fg); color:var(--mbc-ink); filter:drop-shadow(0 3px 0 rgba(0,0,0,.35)); }
+
+@media (max-width: 767.98px){
+  .problema .col-escena{ display:flex; margin-top:8px; }
+  .problema .telefono{ height:330px; width:240px; }
+  .problema .reloj{ font-size:24px; }
+  .dolores{ margin-top:14px; }
+}
+@media (max-width: 767.98px){
+  .problema .lede{ font-size:14.5px; line-height:1.45; }
+  .problema .dolores{ gap:10px; }
+  .problema .dolores .block{ padding:9px 14px; }
+  .problema .dolores b{ font-size:16px; }
+  .problema .dolores span{ font-size:13px; margin-top:2px; }
+  .problema .telefono{ height:290px; }
+}
+/* En celular el contenido ocupa toda la pared: se esconde la decoración colgada */
+@media (max-width: 767.98px){
+  .acabados .ac[style*="top:"]:not(.lampara):not(.ventana){ display:none; }
+}

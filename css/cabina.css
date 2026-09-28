@@ -219,14 +219,50 @@ body.viajando .reflejo{ transform:skewX(-18deg) translateX(18px); }
   #botonera.abierta{ transform:none; width:236px; }
   #botonera .bt-nombre{ opacity:1; transform:none; }
   .bt-boton{ margin-left:4px; }
-  .bt-movil{
-    display:grid; place-items:center; position:fixed; z-index:71; right:14px; bottom:calc(var(--umbral) + 14px);
-    width:56px; height:56px; border:0; border-radius:50%; background:var(--mbc-acc-fg); color:var(--mbc-ink);
-    font:700 17px/1 var(--mbc-f-mono); filter:drop-shadow(0 5px 0 rgba(0,0,0,.4));
-  }
+  .bt-movil{ display:grid; place-items:center; border:0; }
 }
 
 /* ── Sin JS o "reducir movimiento": sin cabina, página normal ─ */
 html.no-js #cabina, html.sin-movimiento #cabina,
 html.no-js .umbral-cabina, html.sin-movimiento .umbral-cabina{ display:none; }
 html.no-js .techo-cabina, html.sin-movimiento .techo-cabina{ background:var(--mbc-acc-bg); }
+
+/* ── Celular: botón de la botonera en el techo + pista para deslizar ── */
+@media (max-width: 767.98px){
+  .techo-acciones{ gap:8px; padding-right:0; }
+  .bt-movil{
+    position:static; width:40px; height:40px; border-radius:12px; filter:none;
+    background:transparent; color:var(--mbc-acc-fg); box-shadow:inset 0 0 0 2px rgba(245,230,163,.45);
+  }
+  .bt-movil[aria-expanded="true"]{ background:var(--mbc-acc-fg); color:var(--mbc-ink); }
+  #botonera{ top:calc(var(--techo) + 6px); bottom:auto; max-height:calc(100dvh - var(--techo) - var(--umbral) - 12px); }
+  .marca svg{ width:30px; height:30px; }
+}
+.pista-deslizar{ display:none; }
+@media (max-width: 767.98px){
+  .pista-deslizar{
+    display:flex; flex-direction:column; align-items:center; position:fixed; z-index:61; left:50%; bottom:calc(var(--umbral) + 12px);
+    transform:translateX(-50%); padding:8px 14px 10px; border-radius:14px; background:rgba(44,44,44,.86); color:var(--mbc-acc-fg);
+    pointer-events:none; transition:opacity .4s var(--mbc-ease);
+  }
+  .pista-deslizar .flecha{ font-size:18px; line-height:.6; animation:subir 1.3s var(--mbc-ease) infinite; }
+  .pista-deslizar .flecha + .flecha{ animation-delay:.15s; }
+  .pista-deslizar .texto{ margin-top:6px; font:600 11px/1 var(--mbc-f-mono); letter-spacing:.1em; text-transform:uppercase; }
+  body.ya-viajo .pista-deslizar, html.sin-movimiento .pista-deslizar{ opacity:0; }
+}
+@keyframes subir{ 0%{ transform:translateY(6px); opacity:0; } 50%{ opacity:1; } 100%{ transform:translateY(-6px); opacity:0; } }
+
+/* ── Selector de idioma (techo y pantalla de carga) ─────────── */
+.idioma-sel{ display:inline-flex; padding:3px; gap:2px; border-radius:12px; box-shadow:inset 0 0 0 2px rgba(245,230,163,.45); }
+.idioma-sel button{
+  min-width:32px; height:34px; padding:0 6px; border:0; border-radius:9px; background:transparent; color:var(--mbc-acc-fg);
+  font:700 12px/1 var(--mbc-f-mono); letter-spacing:.04em; transition:background .2s var(--mbc-ease), color .2s var(--mbc-ease);
+}
+.idioma-sel button[aria-pressed="true"]{ background:var(--mbc-acc-fg); color:var(--mbc-ink); }
+.idioma-sel button:focus-visible{ outline:3px solid var(--mbc-acc-fg); outline-offset:1px; }
+@media (max-width: 767.98px){
+  .idioma-sel button{ min-width:28px; height:32px; padding:0 4px; font-size:11px; }
+  .techo-cabina{ padding-left:calc(var(--jamba) + 4px); }
+  .display{ padding:6px 10px; }
+  .display-piso{ font-size:24px; }
+}

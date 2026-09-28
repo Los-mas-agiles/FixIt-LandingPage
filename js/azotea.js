@@ -1,5 +1,6 @@
 // Azotea: objetos que reaccionan al mouse (o al toque en celular).
 import * as S from './sonido.js'
+import { aplicarIdioma, idiomaActual } from './i18n.js'
 
 const gsap = window.gsap
 const NS = 'http://www.w3.org/2000/svg'
@@ -52,6 +53,7 @@ function crearPaloma([x, y]) {
 
 export function iniciarAzotea() {
   const escena = $('.azotea-escena')
+  paneoMovil(escena)
   PALOMAS.forEach(crearPaloma)
 
   // Sala de máquinas: el engranaje gira
@@ -142,10 +144,31 @@ export function entradaAzotea() {
   tl.from(objetos, { y: -60, opacity: 0, duration: 0.5, ease: 'back.out(1.6)', stagger: 0.07 }, 0.1)
   objetos.forEach((_, i) => tl.call(() => S.ladrillo(), null, 0.3 + i * 0.07))
   const lema = document.querySelector('.hero-lema')
-  const partes = window.SplitText ? new window.SplitText(lema, { type: 'words' }).words : [lema]
+  const corte = window.SplitText ? new window.SplitText(lema, { type: 'words' }) : null
+  const partes = corte ? corte.words : [lema]
+  // Al terminar se deshace el corte por palabras: el texto vuelve a ser un solo nodo (y se puede traducir)
+  tl.eventCallback('onComplete', () => { corte?.revert(); aplicarIdioma(idiomaActual()) })
   tl.from('.azotea .eyebrow', { y: 16, opacity: 0, duration: 0.4 }, 0.15)
   tl.from('.hero-marca', { y: 40, opacity: 0, scale: 0.9, transformOrigin: '0% 100%', duration: 0.6, ease: 'back.out(1.8)' }, 0.25)
   tl.from(partes, { y: 30, opacity: 0, rotation: 4, duration: 0.45, ease: 'power3.out', stagger: 0.06 }, 0.45)
   tl.from('.hero-texto, .hero-acciones .btn, .hero-pista', { y: 20, opacity: 0, duration: 0.45, ease: 'power3.out', stagger: 0.08 }, 0.7)
   return tl
+}
+
+// En celular la escena es más ancha que la pantalla: se recorre de lado a lado
+function paneoMovil(escena) {
+  const movil = matchMedia('(max-width: 767.98px)')
+  let paneo = null
+  const armar = () => {
+    paneo?.kill()
+    paneo = null
+    gsap.set(escena, { x: 0 })
+    if (!movil.matches) return
+    const sala = escena.parentElement
+    const recorrido = () => Math.max(0, escena.getBoundingClientRect().width - sala.clientWidth)
+    paneo = gsap.to(escena, { x: () => -recorrido(), duration: 14, ease: 'sine.inOut', yoyo: true, repeat: -1, invalidateOnRefresh: true, delay: 1.5 })
+  }
+  movil.addEventListener('change', armar)
+  window.addEventListener('resize', () => paneo?.invalidate())
+  armar()
 }

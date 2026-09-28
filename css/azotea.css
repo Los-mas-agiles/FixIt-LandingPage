@@ -23,8 +23,18 @@
 .az-paloma{ cursor:pointer; }
 
 @media (max-width: 767.98px){
-  .azotea .contenido{ padding-top:18px; }
-  .hero-acciones .btn{ flex:1 1 auto; }
+  .azotea .contenido{ padding-top:16px; }
+  .azotea .eyebrow{ font-size:10.5px; }
+  .hero-titulo{ margin:8px 0 10px; }
+  .hero-marca{ font-size:58px; }
+  .hero-lema{ font-size:25px; margin-top:4px; }
+  .hero-texto{ font-size:15px; line-height:1.45; }
+  .hero-acciones{ margin-top:16px; gap:10px; flex-wrap:nowrap; }
+  .hero-acciones .btn.grande{ flex:1 1 0; min-height:48px; padding:10px 12px; font-size:14.5px; white-space:normal; text-align:center; line-height:1.15; }
   .hero-pista{ display:none; }
-  .azotea-escena{ height:38%; }
+  /* La escena conserva su tamaño y la "cámara" la recorre (azotea.js) */
+  .azotea-escena{ height:min(40%, 330px); width:auto; max-width:none; aspect-ratio:1200 / 380; }
+}
+@media (max-width: 767.98px) and (max-height: 700px){
+  .hero-texto{ display:none; }
 }

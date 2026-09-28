@@ -2,14 +2,15 @@
 // un momento y muestra el sello de "recibida", pero no guarda ni envía nada.
 // Cuando haya backend, reemplazar `enviar()` por un fetch a POST /api/contactos.
 import * as S from './sonido.js'
+import { t } from './i18n.js'
 
 const gsap = window.gsap
 const COLORES = ['#BFE0F0', '#F2C4A8', '#B8E8D0', '#F5E6A3', '#C9B8E8', '#BFE0F0']
 const REGLAS = {
-  nombre: (v) => v.trim().length >= 2 || 'Escribe tu nombre.',
-  correo: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) || 'Revisa el correo (ejemplo: ana@correo.com).',
-  edificio: (v) => v.trim().length >= 2 || 'Escribe el nombre del edificio.',
-  dptos: (v) => (+v >= 1 && +v <= 999) || 'Indica cuántos departamentos tiene (1 a 999).',
+  nombre: (v) => v.trim().length >= 2 || t('form.nombre'),
+  correo: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) || t('form.correo'),
+  edificio: (v) => v.trim().length >= 2 || t('form.edificio'),
+  dptos: (v) => (+v >= 1 && +v <= 999) || t('form.dptos'),
 }
 
 const enviar = () => new Promise((r) => setTimeout(r, 1100))
@@ -54,6 +55,9 @@ export function iniciarContacto() {
     return ok
   }
 
+  // Si cambia el idioma, los errores visibles se vuelven a escribir
+  document.addEventListener('idioma', () => campos.filter((c) => c.getAttribute('aria-invalid') === 'true').forEach(validar))
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault()
     const malos = campos.filter((c) => !validar(c))
@@ -67,7 +71,7 @@ export function iniciarContacto() {
     // haya backend no se debe enviar nada.
     const esBot = form.elements.web.value !== ''
     boton.disabled = true
-    boton.textContent = 'Enviando…'
+    boton.textContent = t('form.enviando')
     S.taladro(0, 0.5)
     await (esBot ? new Promise((r) => setTimeout(r, 1100)) : enviar())
     enviado.hidden = false

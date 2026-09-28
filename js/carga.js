@@ -1,6 +1,8 @@
-// Pantalla de carga: la grúa arma la marca con 3 bloques mientras carga
-// la página; cuando todo está listo, las puertas se abren solas.
+// Pantalla de carga: la grúa arma la marca con 3 bloques mientras carga la página.
+// Al terminar aparece un único botón "Iniciar": ese clic abre las puertas y además
+// es el gesto que el navegador exige para dejar sonar el audio.
 import * as S from './sonido.js'
+import { t } from './i18n.js'
 
 const gsap = window.gsap
 const NS = 'http://www.w3.org/2000/svg'
@@ -24,6 +26,11 @@ export function cargar() {
     const texto = carga.querySelector('.carga-texto')
     const barra = carga.querySelector('.carga-barra span')
     const titulo = carga.querySelector('.carga-titulo')
+    const iniciar = carga.querySelector('.carga-iniciar')
+    let listo = false
+    const rotular = () => { texto.textContent = t(listo ? 'carga.listo' : 'carga.construyendo') }
+    rotular()
+    document.addEventListener('idioma', rotular)
 
     gsap.set(carro, { x: 380 })
     gsap.set(gancho, { y: REPOSO })
@@ -65,17 +72,25 @@ export function cargar() {
     const paginaLista = document.readyState === 'complete' ? Promise.resolve() : new Promise((r) => window.addEventListener('load', r, { once: true }))
     Promise.all([document.fonts.ready, paginaLista, new Promise((r) => tl.eventCallback('onComplete', r))]).then(() => {
       gsap.to(progreso, { v: 100, duration: 0.3, onUpdate: pintar })
-      texto.textContent = 'Edificio listo'
+      listo = true
+      rotular()
       gsap.to(titulo, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(2)', startAt: { y: 20 } })
-      // Se abren las puertas y la azotea empieza a animarse mientras tanto
-      gsap.delayedCall(0.9, () => {
-        S.ding()
-        gsap.delayedCall(0.3, resolver)
-        gsap.timeline({ onComplete: () => carga.remove() })
-          .to('.carga-centro', { opacity: 0, scale: 0.96, duration: 0.3 })
-          .to('.puerta.izq', { xPercent: -101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
-          .to('.puerta.der', { xPercent: 101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
-      })
+      iniciar.hidden = false
+      gsap.from(iniciar, { y: 16, opacity: 0, duration: 0.45, ease: 'back.out(2)' })
+      iniciar.focus({ preventScroll: true })
     })
+
+    // Un solo botón: abre las puertas y activa el sonido (este clic lo desbloquea)
+    iniciar.addEventListener('click', () => {
+      iniciar.disabled = true
+      S.activarSonido(S.sonidoGuardado())
+      S.ding()
+      document.removeEventListener('idioma', rotular)
+      gsap.delayedCall(0.3, resolver)
+      gsap.timeline({ onComplete: () => carga.remove() })
+        .to('.carga-centro', { opacity: 0, scale: 0.96, duration: 0.3 })
+        .to('.puerta.izq', { xPercent: -101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
+        .to('.puerta.der', { xPercent: 101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
+    }, { once: true })
   })
 }
