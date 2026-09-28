@@ -69,8 +69,17 @@ export function cargar() {
     tl.play()
     gsap.to(progreso, { v: 80, duration: tl.duration(), ease: 'power1.inOut', onUpdate: pintar })
 
+    medirRendimiento()
+
+    // Nada de esperas eternas: fuentes, página y grúa tienen un tope de tiempo
+    const tope = (promesa, ms) => Promise.race([promesa, new Promise((r) => setTimeout(r, ms))])
     const paginaLista = document.readyState === 'complete' ? Promise.resolve() : new Promise((r) => window.addEventListener('load', r, { once: true }))
-    Promise.all([document.fonts.ready, paginaLista, new Promise((r) => tl.eventCallback('onComplete', r))]).then(() => {
+    Promise.all([
+      tope(document.fonts.ready, 6000),
+      tope(paginaLista, 6000),
+      tope(new Promise((r) => tl.eventCallback('onComplete', r)), 7000),
+    ]).then(() => {
+      window.fixitListo?.()   // la carga terminó: ya no hace falta el rescate a la versión simple
       gsap.to(progreso, { v: 100, duration: 0.3, onUpdate: pintar })
       listo = true
       rotular()
@@ -93,4 +102,19 @@ export function cargar() {
         .to('.puerta.der', { xPercent: 101, duration: 0.95, ease: 'power3.inOut' }, 0.25)
     }, { once: true })
   })
+}
+
+// Mientras la grúa trabaja se cuentan los cuadros por segundo. Si el equipo va lento
+// (laptops de entrada, modo ahorro de batería…), se activa el "modo ligero".
+function medirRendimiento() {
+  if (document.visibilityState !== 'visible') return
+  const inicio = performance.now()
+  let cuadros = 0
+  const contar = (ahora) => {
+    cuadros++
+    if (ahora - inicio < 2000) { requestAnimationFrame(contar); return }
+    const fps = (cuadros * 1000) / (ahora - inicio)
+    if (fps < 32 || (navigator.hardwareConcurrency || 8) <= 2) document.documentElement.classList.add('ligero')
+  }
+  requestAnimationFrame(contar)
 }

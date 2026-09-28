@@ -266,3 +266,35 @@ html.no-js .techo-cabina, html.sin-movimiento .techo-cabina{ background:var(--mb
   .display{ padding:6px 10px; }
   .display-piso{ font-size:24px; }
 }
+
+/* ── Tirón: indicador para cambiar de piso con un gesto deliberado ── */
+.tiron{
+  position:fixed; z-index:62; left:calc((100vw - var(--panel)) / 2); bottom:calc(var(--umbral) + 18px);
+  display:flex; flex-direction:column; align-items:center; gap:7px; padding:10px 16px 12px; border-radius:16px;
+  background:var(--mbc-acc-bg); color:var(--mbc-acc-fg); box-shadow:inset 0 0 0 2px rgba(245,230,163,.25), 0 6px 0 rgba(0,0,0,.3);
+  pointer-events:none; opacity:0; transform:translate(-50%, 12px); transition:opacity .2s var(--mbc-ease), transform .3s var(--mbc-ease);
+}
+.tiron.arriba{ bottom:auto; top:calc(var(--techo) + 18px); flex-direction:column-reverse; transform:translate(-50%, -12px); }
+.tiron.visible{ opacity:1; transform:translate(-50%, 0); }
+.tiron-flecha{ font:700 14px/1 var(--mbc-f-mono); }
+.tiron-texto{ font:600 12px/1.2 var(--mbc-f-mono); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+.tiron-barra{ width:170px; height:6px; border-radius:3px; background:rgba(245,230,163,.18); overflow:hidden; }
+.tiron-barra i{ display:block; height:100%; border-radius:3px; background:var(--mbc-acc-fg); transform-origin:left; transform:scaleX(0); }
+.tiron.lleno .tiron-barra i{ background:var(--mbc-mint); }
+.tiron.lleno .tiron-flecha{ animation:tiron-listo .5s var(--mbc-ease) infinite alternate; }
+@keyframes tiron-listo{ to{ transform:translateY(3px); } }
+html.sin-movimiento .tiron{ display:none; }
+
+/* ── Equipos que piden "menos movimiento": sin sacudidas ni destellos ── */
+html.movimiento-suave .velocidad{ display:none; }
+html.movimiento-suave .cielo-estrellas{ animation:none; }
+html.movimiento-suave .nube{ animation-duration:240s; }
+
+/* ── Modo ligero (equipos lentos): menos trabajo para la tarjeta gráfica ── */
+html.ligero .nube, html.ligero .cielo-estrellas, html.ligero .cielo-lluvia{ animation:none; }
+html.ligero .reflejo{ transition:none; }
+html.ligero .block{ filter:none; box-shadow:inset 0 0 0 2px var(--mbc-line), 0 6px 0 rgba(0,0,0,.08); }
+html.ligero .block.on-dark{ box-shadow:0 6px 0 rgba(0,0,0,.2); }
+
+/* Sin JS (o si falló) la botonera no tiene botones: no se muestra */
+#botonera:has(.bt-lista:empty){ display:none; }

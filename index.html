@@ -14,9 +14,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
   <script>
-    // Con JS: página-ascensor. Sin JS o con "reducir movimiento": página normal con scroll.
-    document.documentElement.classList.replace('no-js', 'js');
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('sin-movimiento');
+    // Arranque a prueba de fallos (JS clásico, funciona aunque falle todo lo demás).
+    // - Con JS: página-ascensor. Sin JS, con ?simple o si algo falla: página normal con scroll.
+    // - "Reducir movimiento" (Windows: Accesibilidad > Efectos visuales > Efectos de animación,
+    //   que muchas laptops nuevas traen apagado) NO apaga la experiencia: solo la suaviza.
+    (function () {
+      var html = document.documentElement;
+      html.classList.replace('no-js', 'js');
+      if (/[?&]simple\b/.test(location.search)) html.classList.add('sin-movimiento');
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) html.classList.add('movimiento-suave');
+
+      var listo = false;
+      window.fixitListo = function () { listo = true; };
+      window.fixitModoSimple = function (motivo) {
+        if (listo) return;
+        listo = true;
+        if (window.console) console.warn('FixIt: versión simple (' + motivo + ')');
+        html.classList.add('sin-movimiento');
+        var aplicar = function () {
+          var carga = document.getElementById('carga');
+          if (carga) carga.parentNode.removeChild(carga);
+          var edificio = document.getElementById('edificio');
+          if (edificio) edificio.removeAttribute('style');
+          var pisos = document.querySelectorAll('.piso');
+          for (var i = 0; i < pisos.length; i++) pisos[i].inert = false;
+          if (window.fixitAlSimplificar) { try { window.fixitAlSimplificar(); } catch (e) {} }
+        };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aplicar);
+        else aplicar();
+      };
+      // Si en 15 s la carga no terminó (red lenta, script bloqueado…), versión simple
+      setTimeout(function () { window.fixitModoSimple('tiempo'); }, 15000);
+      // Un error de nuestros scripts antes de terminar la carga también lleva a la versión simple
+      window.addEventListener('error', function (e) {
+        var src = (e && e.filename) || '';
+        if (src.indexOf(location.origin) === 0 || src.indexOf('gsap') > -1) window.fixitModoSimple('error');
+      });
+    })();
   </script>
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/base.css" />
@@ -859,6 +893,8 @@
   <p class="bt-pie mono" aria-hidden="true">FIXIT · CAP. 8</p>
 </nav>
 <div class="pista-deslizar" aria-hidden="true"><span class="flecha">︿</span><span class="flecha">︿</span><span class="texto">Desliza para bajar</span></div>
+<!-- Indicador del "tirón": hay que insistir en el borde del piso para cambiar de piso -->
+<div class="tiron" aria-hidden="true" data-no-traducir><span class="tiron-flecha">▼</span><span class="tiron-texto"></span><span class="tiron-barra"><i></i></span></div>
 
 <!-- ═════════ PANTALLA DE CARGA: puertas del ascensor ═════════ -->
 <div id="carga" aria-hidden="true">
@@ -882,14 +918,15 @@
     <div class="carga-barra"><span></span></div>
     <h2 id="carga-titulo" class="carga-titulo">FixIt</h2>
     <button class="btn grande carga-iniciar" type="button" hidden>Iniciar</button>
+    <a class="carga-simple" href="?simple">Ver versión sin animaciones</a>
     <div class="idioma-sel" role="group" aria-label="Idioma"><button type="button" data-idioma="es" aria-pressed="true" lang="es">ES</button><button type="button" data-idioma="en" aria-pressed="false" lang="en">EN</button></div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Observer.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
+<!-- GSAP 3.13.0 dentro del repo (main.js prueba CDN de respaldo si falla) -->
+<script src="vendor/gsap/gsap.min.js" defer></script>
+<script src="vendor/gsap/CustomEase.min.js" defer></script>
+<script src="vendor/gsap/SplitText.min.js" defer></script>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>

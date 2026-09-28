@@ -319,14 +319,20 @@ html.no-js #carga, html.sin-movimiento #carga{ display:none; }
 /* Piso 2: tablero ágil */
 .ta-col{ font:700 11px var(--mbc-f-mono); letter-spacing:.08em; fill:#2C2C2C; opacity:.75; }
 
-@media (max-width: 1100px){
+@media (max-width: 900px){
   .contenido.funciona{ grid-template-columns:1fr; }
   .pizarra{ max-width:560px; }
 }
+
+/* Laptops con pantalla baja (1366×768, 1280×720…): si el contenido no cabe, se
+   desplaza dentro del piso en vez de quedar cortado. Al llegar al borde, el
+   "tirón" (ascensor.js) lleva al piso siguiente. */
+html.js:not(.sin-movimiento) .contenido{ overflow-x:hidden; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:rgba(44,44,44,.35) transparent; }
 @media (max-width: 767.98px){
   .tablero-agil{ display:none; }
 }
-@media (max-height: 720px){
+@media (max-height: 720px), (min-width: 768px) and (max-width: 1100px){
+  .funciona .t-piso{ font-size:clamp(26px, 3vw, 38px); }
   .funciona .pasos li > span:not(.paso-n){ display:none; }
   .funciona .pasos .block{ padding:12px 14px; }
   .funciona .metas{ margin-top:14px; }

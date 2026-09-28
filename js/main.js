@@ -1,55 +1,45 @@
-// Punto de entrada: arma la página-ascensor.
-import * as S from './sonido.js'
-import { iniciarAscensor, modoEstatico, destinoInicial, ir } from './ascensor.js'
-import { iniciarAzotea, entradaAzotea } from './azotea.js'
-import { iniciarContacto } from './contacto.js'
-import { cargar } from './carga.js'
-import { dibujarCiudad } from './ciudad.js'
-import { prepararEscenas } from './escenas.js'
-import { iniciarIdioma, t } from './i18n.js'
+// Arranque a prueba de fallos:
+// 1. Asegura GSAP. Viene dentro del repo (vendor/gsap); si por algo no cargó,
+//    se prueba con jsDelivr y luego con cdnjs.
+// 2. Recién ahí carga la página-ascensor (app.js).
+// 3. Si algo falla, pasa a la versión simple (window.fixitModoSimple, en index.html)
+//    en vez de dejar la pantalla de carga trabada.
 
-const gsap = window.gsap
-gsap.registerPlugin(window.Observer, window.CustomEase, window.SplitText)
+const RESPALDOS = [
+  'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/',
+  'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/',
+]
+const PIEZAS = [
+  ['gsap', 'gsap.min.js'],
+  ['CustomEase', 'CustomEase.min.js'],
+  ['SplitText', 'SplitText.min.js'],
+]
 
-// Los <svg> que usan una pieza del kit heredan su viewBox (así mantienen la proporción)
-document.querySelectorAll('svg:not([viewBox]) > use:only-child, svg.rol-figura > use:first-child, svg.miembro-figura > use').forEach((u) => {
-  const svg = u.parentNode
-  if (svg.getAttribute('viewBox')) return
-  const simbolo = document.querySelector(u.getAttribute('href'))
-  if (simbolo) svg.setAttribute('viewBox', simbolo.getAttribute('viewBox'))
-})
-
-// Sonido: activado por defecto (salvo que la persona lo haya apagado antes);
-// suena desde el primer clic, toque o tecla.
-const btnSonido = document.querySelector('.btn-sonido')
-const pintarSonido = () => {
-  btnSonido.setAttribute('aria-pressed', String(S.sonidoActivo()))
-  btnSonido.classList.toggle('pendiente', S.sonidoBloqueado())
-  btnSonido.title = S.sonidoBloqueado() ? t('sonido.bloqueado') : ''
+function cargarScript(src) {
+  return new Promise((listo, fallo) => {
+    const s = document.createElement('script')
+    s.src = src
+    s.onload = listo
+    s.onerror = () => fallo(new Error(`No cargó ${src}`))
+    document.head.appendChild(s)
+  })
 }
-btnSonido.addEventListener('click', () => {
-  if (!S.recienDesbloqueado()) S.activarSonido(!S.sonidoActivo())
-  pintarSonido()
-  S.clic()
-})
-S.alCambiarSonido(pintarSonido)
-S.activarSonido(S.sonidoGuardado())
-S.esperarGesto()
-pintarSonido()
 
-dibujarCiudad()
-prepararEscenas()
-iniciarIdioma()
-document.addEventListener('idioma', pintarSonido)
-iniciarContacto()
+async function asegurarGsap() {
+  for (const [global, archivo] of PIEZAS) {
+    for (const base of RESPALDOS) {
+      if (window[global]) break
+      try { await cargarScript(base + archivo) } catch (e) { console.warn('FixIt:', e.message) }
+    }
+  }
+  const falta = PIEZAS.filter(([global]) => !window[global]).map(([global]) => global)
+  if (falta.length) throw new Error(`Faltan librerías: ${falta.join(', ')}`)
+}
 
-if (document.documentElement.classList.contains('sin-movimiento')) {
-  modoEstatico()
-} else {
-  iniciarAscensor()
-  iniciarAzotea()
-  const destino = destinoInicial()
-  await cargar()
-  const intro = entradaAzotea()
-  if (destino > 0) intro.then(() => ir(destino))
+try {
+  await asegurarGsap()
+  await import('./app.js')
+} catch (error) {
+  console.error('FixIt:', error)
+  window.fixitModoSimple?.('arranque')
 }

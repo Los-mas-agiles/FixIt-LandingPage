@@ -29,3 +29,7 @@
 .carga-iniciar:not([hidden]){ animation:latido 1.6s var(--mbc-ease) infinite; }
 @keyframes latido{ 0%, 100%{ box-shadow:0 0 0 0 rgba(245,230,163,.45); } 60%{ box-shadow:0 0 0 14px rgba(245,230,163,0); } }
 .carga-centro .idioma-sel{ margin-top:4px; }
+/* Solo en equipos con "reducir movimiento": ofrece la versión sin animaciones */
+.carga-simple{ display:none; font:500 12px var(--mbc-f-mono); letter-spacing:.04em; color:var(--mbc-acc-fg-2); text-underline-offset:3px; }
+html.movimiento-suave .carga-simple{ display:inline; }
+.carga-simple:focus-visible{ outline:3px solid var(--mbc-acc-fg); outline-offset:3px; }

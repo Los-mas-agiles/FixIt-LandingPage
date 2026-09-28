@@ -4,8 +4,8 @@ import * as S from './sonido.js'
 
 const gsap = window.gsap
 const TONOS_LADRILLO = ['#E7A987', '#EDB594', '#DE9C7A', '#F0BD9E', '#E3A382']
-const ANCHO = 66
-const ALTO = 30
+// En modo ligero (equipos lentos) los ladrillos son el doble de grandes: ~4 veces menos piezas
+const medidas = () => (document.documentElement.classList.contains('ligero') ? [132, 60] : [66, 30])
 
 const SVG_LLANA = `<svg viewBox="0 0 120 70" width="96"><path d="M8 40h104l-8 22H16z" fill="#D8D2C4" stroke="#2C2C2C" stroke-width="4" stroke-linejoin="round"/><rect x="50" y="8" width="20" height="32" rx="6" fill="#F2C4A8" stroke="#2C2C2C" stroke-width="4"/></svg>`
 const SVG_RODILLO = `<svg viewBox="0 0 80 240" width="64"><rect x="10" y="4" width="60" height="100" rx="18" style="fill:var(--pared)" stroke="#2C2C2C" stroke-width="5"/><path d="M40 104v40h26v70" fill="none" stroke="#2C2C2C" stroke-width="7" stroke-linejoin="round"/><rect x="56" y="196" width="20" height="40" rx="6" fill="#F5E6A3" stroke="#2C2C2C" stroke-width="4"/></svg>`
@@ -13,6 +13,7 @@ const SVG_RODILLO = `<svg viewBox="0 0 80 240" width="64"><rect x="10" y="4" wid
 function crearLadrillos(muro) {
   const w = muro.clientWidth
   const h = muro.clientHeight
+  const [ANCHO, ALTO] = medidas()
   const filas = Math.ceil(h / ALTO) + 1
   const cols = Math.ceil(w / ANCHO) + 1
   const frag = document.createDocumentFragment()
@@ -22,7 +23,7 @@ function crearLadrillos(muro) {
     for (let c = 0; c < cols; c++) {
       const b = document.createElement('i')
       b.className = 'ladrillo'
-      b.style.cssText = `left:${c * ANCHO + desfase}px;top:${h - (f + 1) * ALTO}px;width:${ANCHO - 4}px;--lc:${TONOS_LADRILLO[(f * 7 + c * 3) % TONOS_LADRILLO.length]}`
+      b.style.cssText = `left:${c * ANCHO + desfase}px;top:${h - (f + 1) * ALTO}px;width:${ANCHO - 4}px;height:${ALTO - 4}px;--lc:${TONOS_LADRILLO[(f * 7 + c * 3) % TONOS_LADRILLO.length]}`
       frag.appendChild(b)
       lista.push(b)
     }
