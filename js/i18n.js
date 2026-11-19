@@ -212,6 +212,7 @@ const T = {
     'form.correo': 'Revisa el correo (ejemplo: ana@correo.com).',
     'form.edificio': 'Escribe el nombre del edificio.',
     'form.dptos': 'Indica cuántos departamentos tiene (1 a 999).',
+    'form.telefono': 'Revisa el celular (9 dígitos, ejemplo: 987 654 321).',
     'reloj.dias': ['VIE', 'SÁB', 'DOM', 'LUN'],
     chat: [
       { de: 'Sra. Rosa · 701', t: 'Buenos días vecinos 🌞' },
@@ -244,6 +245,7 @@ const T = {
     'form.correo': 'Check the email address (e.g. ana@mail.com).',
     'form.edificio': 'Please enter the building name.',
     'form.dptos': 'How many apartments does it have? (1 to 999)',
+    'form.telefono': 'Check the phone number (9 digits, e.g. 987 654 321).',
     'reloj.dias': ['FRI', 'SAT', 'SUN', 'MON'],
     chat: [
       { de: 'Mrs. Rosa · 701', t: 'Good morning, neighbors 🌞' },

@@ -10,7 +10,9 @@ const REGLAS = {
   nombre: (v) => v.trim().length >= 2 || t('form.nombre'),
   correo: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) || t('form.correo'),
   edificio: (v) => v.trim().length >= 2 || t('form.edificio'),
-  dptos: (v) => (+v >= 1 && +v <= 999) || t('form.dptos'),
+  dptos: (v) => (Number.isInteger(+v) && +v >= 1 && +v <= 999) || t('form.dptos'),
+  // Opcional: vacío vale; si se llena, celular peruano (9 dígitos que empiezan en 9, con o sin +51)
+  telefono: (v) => v.trim() === '' || /^(\+?51)?9\d{8}$/.test(v.replace(/[\s-]/g, '')) || t('form.telefono'),
 }
 
 const enviar = () => new Promise((r) => setTimeout(r, 1100))
